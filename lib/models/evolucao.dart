@@ -23,7 +23,7 @@ class Evolucao {
   static Evolucao getTeste() {
     return Evolucao(
       id: 1,
-      aluno: Aluno.getTeste(),
+      //aluno: Aluno.getTeste(),
       data: DateTime.now(),
       comoChegou: 'Disposto e sem queixas',
       condutasUtilizadas:

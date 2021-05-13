@@ -1,3 +1,5 @@
+import 'package:rx_notifier/rx_notifier.dart';
+
 import 'login_controller.dart';
 import '../utils/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     super.initState();
     controller = LoginController();
+    controller.buscarDadosPreferencias();
   }
 
   @override
@@ -61,14 +64,18 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    child: Text('ENTRAR'),
-                    onPressed: () => controller.login(context),
-                  ),
-                ),
+                RxBuilder(builder: (_) {
+                  return controller.carregando.value == 1
+                      ? CircularProgressIndicator()
+                      : SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            child: Text('ENTRAR'),
+                            onPressed: () => controller.login(context),
+                          ),
+                        );
+                }),
               ],
             ),
           ),

@@ -1,12 +1,14 @@
-import 'package:rx_notifier/rx_notifier.dart';
-
 import '../models/aluno.dart';
+import 'aluno_repository.dart';
 
 class AlunoListaController {
-  final alunos = RxList<Aluno>([Aluno.getTeste()]);
-  final carregando = false;
+  final _repository = AlunoRepository();
+
+  Future<List<Aluno>> buscar() async {
+    return _repository.buscar(null, null);
+  }
 
   void dispose() {
-    alunos.clear();
+    
   }
 }

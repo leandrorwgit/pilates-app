@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Aluno {
   int? id;
   String? nome;
@@ -38,25 +40,53 @@ class Aluno {
       this.aulaSab,
       this.ativo});
 
-  static Aluno getTeste() {
-    return new Aluno(
-        id: 1,
-        nome: 'Leandro',
-        idade: 35,
-        dataNascimento: DateTime.parse('1986-06-10'),
-        profissao: 'Programador',
-        celular: '47 98846-4794',
-        email: 'leandrorw@yahoo.com.br',
-        objetivosPilates: 'Melhorar qualidade de vida',
-        queixas: 'Dor na coluna',
-        formaPagamento: 'Pix',
-        diaPagamento: 10,
-        aulaSeg: true,
-        aulaTer: false,
-        aulaQua: true,
-        aulaQui: false,
-        aulaSex: false,
-        aulaSab: false,
-        ativo: true);
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nome': nome,
+      'idade': idade,
+      'dataNascimento': dataNascimento?.toIso8601String(),
+      'profissao': profissao,
+      'celular': celular,
+      'email': email,
+      'objetivosPilates': objetivosPilates,
+      'queixas': queixas,
+      'formaPagamento': formaPagamento,
+      'diaPagamento': diaPagamento,
+      'aulaSeg': aulaSeg,
+      'aulaTer': aulaTer,
+      'aulaQua': aulaQua,
+      'aulaQui': aulaQui,
+      'aulaSex': aulaSex,
+      'aulaSab': aulaSab,
+      'ativo': ativo,
+    };
   }
+
+  factory Aluno.fromMap(Map<String, dynamic> map) {
+    return Aluno(
+      id: map['id'],
+      nome: map['nome'],
+      idade: map['idade'],
+      dataNascimento: DateTime.parse(map['dataNascimento']),
+      profissao: map['profissao'],
+      celular: map['celular'],
+      email: map['email'],
+      objetivosPilates: map['objetivosPilates'],
+      queixas: map['queixas'],
+      formaPagamento: map['formaPagamento'],
+      diaPagamento: map['diaPagamento'],
+      aulaSeg: map['aulaSeg'],
+      aulaTer: map['aulaTer'],
+      aulaQua: map['aulaQua'],
+      aulaQui: map['aulaQui'],
+      aulaSex: map['aulaSex'],
+      aulaSab: map['aulaSab'],
+      ativo: map['ativo'],
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Aluno.fromJson(String source) => Aluno.fromMap(json.decode(source));
 }

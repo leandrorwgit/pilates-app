@@ -1,6 +1,7 @@
 import 'package:app_pilates/utils/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/rotas.dart';
 import 'package:flutter/material.dart';
@@ -68,10 +69,18 @@ class AppDrawer extends StatelessWidget {
           _criarItem(
             Icons.exit_to_app,
             'Sair',
-            () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+            () => deslogarApp(context),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> deslogarApp(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('app-pilates-token');
+    prefs.remove('app-pilates-senha');
+    Navigator.of(context).pushReplacementNamed(Rotas.LOGIN);
+    //SystemChannels.platform.invokeMethod('SystemNavigator.pop')
   }
 }
