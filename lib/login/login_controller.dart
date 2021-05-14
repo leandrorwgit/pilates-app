@@ -1,9 +1,8 @@
 import 'package:rx_notifier/rx_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../utils/rotas.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/rotas.dart';
 import 'login_repository.dart';
 
 class LoginController {

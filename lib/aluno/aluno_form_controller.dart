@@ -1,11 +1,11 @@
-import 'dart:math';
-
-import 'package:app_pilates/utils/formatos.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/formatos.dart';
 import '../models/aluno.dart';
+import 'aluno_repository.dart';
 
 class AlunoFormController {
+  final _repository = AlunoRepository();
   int? idAluno;
   final nomeController = TextEditingController(text: '');
   final idadeController = TextEditingController(text: '');
@@ -17,6 +17,8 @@ class AlunoFormController {
   final queixasController = TextEditingController(text: '');
   final diaPagamentoController = TextEditingController(text: '');
   List<bool> aulaDiaSelecionado = [false, false, false, false, false, false];
+  final aulaHorarioIniController = TextEditingController(text: '');
+  final aulaHorarioFimController = TextEditingController(text: '');
   bool ativo = true;
   final formaPagamentoItens = ['Pix', 'Dinheiro', 'Depósito', 'DOC'];
   String formaPagamento = 'Pix';
@@ -41,15 +43,14 @@ class AlunoFormController {
       aulaDiaSelecionado[3] = aluno.aulaQui ?? false;
       aulaDiaSelecionado[4] = aluno.aulaSex ?? false;
       aulaDiaSelecionado[5] = aluno.aulaSab ?? false;
+      aulaHorarioIniController.text = aluno.aulaHorarioIni ?? '';
+      aulaHorarioFimController.text = aluno.aulaHorarioFim ?? '';
       ativo = aluno.ativo ?? false;       
     }
   }
 
-  Aluno persistir() {
-    Aluno aluno = Aluno();
-    if (idAluno == null) {
-      aluno.id = Random().nextInt(100); 
-    }
+  Future<Aluno> persistir() async {
+    Aluno aluno = Aluno();    
     aluno.nome = nomeController.text;
     aluno.idade = int.tryParse(idadeController.text) ?? 0;
     aluno.dataNascimento = Formatos.data.parse(dataNascimentoController.text);
@@ -66,8 +67,17 @@ class AlunoFormController {
     aluno.aulaQui = aulaDiaSelecionado[3];
     aluno.aulaSex = aulaDiaSelecionado[4];
     aluno.aulaSab = aulaDiaSelecionado[5];
-    aluno.ativo = ativo;    
-    return aluno;
+    aluno.aulaHorarioIni = aulaHorarioIniController.text;
+    aluno.aulaHorarioFim = aulaHorarioFimController.text;
+    aluno.ativo = ativo;
+    Aluno alunoRetorno;  
+    if (idAluno == null) {
+      alunoRetorno = await _repository.inserir(aluno);
+    } else {
+      aluno.id = idAluno;
+      alunoRetorno = await _repository.atualizar(aluno);
+    }  
+    return alunoRetorno;
   }
 
   void dispose() {
@@ -80,5 +90,7 @@ class AlunoFormController {
     objetivosPilatesController.dispose();
     queixasController.dispose();
     diaPagamentoController.dispose();
+    aulaHorarioIniController.dispose();
+    aulaHorarioFimController.dispose();
   }
 }

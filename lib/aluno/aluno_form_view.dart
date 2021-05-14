@@ -17,7 +17,7 @@ class AlunoFormView extends StatefulWidget {
   _AlunoFormViewState createState() => _AlunoFormViewState();
 }
 
-class _AlunoFormViewState extends State<AlunoFormView> { 
+class _AlunoFormViewState extends State<AlunoFormView> {
   final _formKey = GlobalKey<FormState>();
   late final controller;
 
@@ -29,7 +29,7 @@ class _AlunoFormViewState extends State<AlunoFormView> {
   }
 
   @override
-  Widget build(BuildContext context) {        
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.aluno == null ? 'Novo Aluno' : 'Alterar Aluno'),
@@ -166,6 +166,18 @@ class _AlunoFormViewState extends State<AlunoFormView> {
                     ],
                   ),
                 ),
+                TextFormField(
+                  controller: controller.aulaHorarioIniController,
+                  style: TextStyle(color: AppColors.texto),
+                  keyboardType: TextInputType.text,
+                  decoration: Estilos.getDecoration('Horário Início'),
+                ),                
+                TextFormField(
+                  controller: controller.aulaHorarioFimController,
+                  style: TextStyle(color: AppColors.texto),
+                  keyboardType: TextInputType.text,
+                  decoration: Estilos.getDecoration('Horário Fim'),
+                ),                
                 // Forma Pagamento
                 DropdownButtonFormField<String>(
                   value: controller.formaPagamento,
@@ -191,10 +203,15 @@ class _AlunoFormViewState extends State<AlunoFormView> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.save),
-        onPressed: () {
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            Aluno aluno = controller.persistir();
-            Navigator.pop(context, aluno);
+            try {
+              Aluno aluno = await controller.persistir();
+              Navigator.pop(context, aluno);
+            } catch (e) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(e.toString())));
+            }
           }
         },
       ),

@@ -35,7 +35,7 @@ class _AlunoListaViewState extends State<AlunoListaView> {
           builder: (BuildContext context, AsyncSnapshot<List<Aluno>> snapshot) {
             if (snapshot.hasError) {
               return Componentes.erroRest(snapshot);
-            } else if (!snapshot.hasData) {
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
               );
@@ -82,7 +82,13 @@ class _AlunoListaViewState extends State<AlunoListaView> {
   Future<void> _abrirFormulario(Aluno? aluno) async {
     final result = await Navigator.of(context)
         .pushNamed(Rotas.ALUNO_FORM, arguments: aluno);
-    //controller.alunos.add(result);
+    if (result != null) {
+      // Se retornou um usuário é porque alterou, então atualiza busca
+      setState(() {
+        _listaAlunosFuture = _controller.buscar();
+      });
+    }
+
   }
 
   void _excluirAluno(Aluno aluno) {

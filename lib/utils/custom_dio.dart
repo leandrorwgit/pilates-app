@@ -4,18 +4,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomDio {
   var _dio;
-  var options = BaseOptions(
+  var baseOptions = BaseOptions(
     baseUrl: 'https://pilates-api.herokuapp.com/api/',
     connectTimeout: 5000,
     receiveTimeout: 3000,
   );
 
   CustomDio() {
-    _dio = Dio(options);
+    _dio = Dio(baseOptions);
   }
 
   CustomDio.comAutenticacao() {
-    _dio = Dio(options);
+    _dio = Dio(baseOptions);
     _dio.interceptors
         .add(InterceptorsWrapper(onRequest: (options, handler) async {
       // Do something before request is sent
@@ -35,20 +35,22 @@ class CustomDio {
       // you can reject a `DioError` object eg: return `dio.reject(dioError)`
     }, onError: (DioError error, handler) async {
       // Do something with response error
-      if (error.response?.statusCode == 4030 ||
-          error.response?.statusCode == 4010) {
+      if (error.response?.statusCode == 403 ||
+          error.response?.statusCode == 401) {
+        var options = error.response?.requestOptions;
         _dio.lock();
         _dio.interceptors.responseLock.lock();
         _dio.interceptors.errorLock.lock();
         var repository = LoginRepository();
         repository.loginComPreferences().then((token) {
-          options.headers['Authorization'] = 'Bearer ' + token;
+          options!.headers['Authorization'] = 'Bearer ' + token;
         }).whenComplete(() {
           _dio.unlock();
           _dio.interceptors.responseLock.unlock();
           _dio.interceptors.errorLock.unlock();
         }).then((e) {
           // repete a chamada
+          //dio.request(options.path, options: options));
           _dio.fetch(options).then(
             (r) => handler.resolve(r),
             onError: (e) {
