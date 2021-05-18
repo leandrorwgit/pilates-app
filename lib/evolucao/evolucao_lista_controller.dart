@@ -1,12 +1,14 @@
-import 'package:rx_notifier/rx_notifier.dart';
-
 import '../models/evolucao.dart';
+import 'evolucao_repository.dart';
 
 class EvolucaoListaController {
-  final evolucoes = RxList<Evolucao>([Evolucao.getTeste()]);
-  final carregando = false;
+  final _repository = EvolucaoRepository();
+
+  Future<List<Evolucao>> buscar() async {
+    return _repository.buscar(null, null);
+  }
 
   void dispose() {
-    evolucoes.clear();
+    
   }
 }

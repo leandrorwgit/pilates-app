@@ -1,12 +1,18 @@
 import 'dart:math';
 
+import 'package:rx_notifier/rx_notifier.dart';
+
 import '../models/aluno.dart';
 import '../utils/formatos.dart';
 import 'package:flutter/material.dart';
 
 import '../models/evolucao.dart';
+import 'evolucao_repository.dart';
 
 class EvolucaoFormController {
+  final _repository = EvolucaoRepository();
+  var evolucao = Evolucao();
+  var alunoSelecionado = Aluno();
   int? idEvolucao;
   final alunoController = TextEditingController(text: '');
   final dataController = TextEditingController(text: '');
@@ -23,7 +29,7 @@ class EvolucaoFormController {
     'Mat'
   ];
   List<bool> aparelhosSelecionados = [false, false, false, false, false, false];
-  final carregando = false;
+  var carregando = RxNotifier<int>(0);
 
   List<bool> aparelhosToList(String? aparelhosUtilizados) {
     final retorno = [false, false, false, false, false, false];
@@ -51,6 +57,7 @@ class EvolucaoFormController {
 
   void carregar(Evolucao? evolucao) {
     if (evolucao != null) {
+      this.evolucao = evolucao;
       idEvolucao = evolucao.id;
       alunoController.text = evolucao.aluno?.nome ?? '';
       dataController.text = Formatos.data
@@ -63,31 +70,39 @@ class EvolucaoFormController {
           evolucao.orientacoesDomiciliares ?? '';
     } else {
       dataController.text = Formatos.data.format(DateTime.now());
+      alunoSelecionado.id = 1;
     }
   }
 
-  Evolucao persistir() {
-    Evolucao evolucao = Evolucao();
-    if (idEvolucao == null) {
-      evolucao.id = Random().nextInt(100);
-      evolucao.aluno = Aluno();
+  Future<Evolucao> persistir() async {
+    try {
+      carregando.value = 1;    
+      evolucao.aluno = alunoSelecionado;
+      evolucao.data = Formatos.data.parse(dataController.text);
+      evolucao.comoChegou = comoChegouController.text;
+      evolucao.condutasUtilizadas = condutasUtilizadasController.text;
+      evolucao.aparelhosUtilizados = aparelhosToString(aparelhosSelecionados);
+      evolucao.comoSaiu = comoSaiuController.text;
+      evolucao.orientacoesDomiciliares = orientacoesDomiciliaresController.text;
+      Evolucao evolucaoRetorno;  
+      if (idEvolucao == null) {
+        evolucaoRetorno = await _repository.inserir(evolucao);
+      } else {
+        evolucao.id = idEvolucao;
+        evolucaoRetorno = await _repository.atualizar(evolucao);
+      }  
+      return evolucaoRetorno;
+    } finally {
+      carregando.value = 0;
     }
-    evolucao.aluno?.nome = alunoController.text;
-    evolucao.data = Formatos.data.parse(dataController.text);
-    evolucao.comoChegou = comoChegouController.text;
-    evolucao.condutasUtilizadas = condutasUtilizadasController.text;
-    evolucao.aparelhosUtilizados = aparelhosToString(aparelhosSelecionados);
-        evolucao.comoSaiu = comoSaiuController.text;
-        evolucao.orientacoesDomiciliares = orientacoesDomiciliaresController.text;
-        return evolucao;
-      }
+  }
     
-      void dispose() {
-        alunoController.dispose();
-        dataController.dispose();
-        comoChegouController.dispose();
-        condutasUtilizadasController.dispose();
-        comoSaiuController.dispose();
-        orientacoesDomiciliaresController.dispose();
-      }
+  void dispose() {
+    alunoController.dispose();
+    dataController.dispose();
+    comoChegouController.dispose();
+    condutasUtilizadasController.dispose();
+    comoSaiuController.dispose();
+    orientacoesDomiciliaresController.dispose();
+  }
 }

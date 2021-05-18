@@ -1,3 +1,5 @@
+import 'package:rx_notifier/rx_notifier.dart';
+
 import '../utils/estilos.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
@@ -31,191 +33,212 @@ class _AlunoFormViewState extends State<AlunoFormView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.aluno == null ? 'Novo Aluno' : 'Alterar Aluno'),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+        appBar: AppBar(
+          title: Text(widget.aluno == null ? 'Novo Aluno' : 'Alterar Aluno'),
+        ),
+        body: Stack(children: [
+          Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    Text(
-                      'Ativo',
-                      style: TextStyle(color: AppColors.label),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Ativo',
+                          style: TextStyle(color: AppColors.label),
+                        ),
+                        Switch(
+                            value: controller.ativo,
+                            onChanged: (bool value) {
+                              setState(() {
+                                controller.ativo = value;
+                              });
+                            }),
+                      ],
                     ),
-                    Switch(
-                        value: controller.ativo,
-                        onChanged: (bool value) {
-                          setState(() {
-                            controller.ativo = value;
-                          });
-                        }),
+                    TextFormField(
+                      controller: controller.nomeController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Nome'),
+                      validator: (String? value) {
+                        return Validacoes.validarCampoObrigatorio(
+                            value, 'Nome deve ser informado!');
+                      },
+                    ),
+                    TextFormField(
+                      controller: controller.idadeController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.number,
+                      decoration: Estilos.getDecoration('Idade'),
+                    ),
+                    TextFormField(
+                      controller: controller.dataNascimentoController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.number,
+                      decoration: Estilos.getDecoration(
+                          'Data Nascimento [Ex: 10/06/1986]'),
+                      inputFormatters: [MaskedInputFormatter("00/00/0000")],
+                      validator: (String? value) {
+                        return Validacoes.validarData(
+                            value, "Data de nascimento inválida!");
+                      },
+                    ),
+                    TextFormField(
+                      controller: controller.profissaoController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Profissão'),
+                    ),
+                    TextFormField(
+                      controller: controller.celularController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.number,
+                      decoration: Estilos.getDecoration(
+                          'Celular [Ex: (47) 91234-5678]'),
+                      inputFormatters: [
+                        MaskedInputFormatter("(00) 00000-0000")
+                      ],
+                    ),
+                    TextFormField(
+                      controller: controller.emailController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: Estilos.getDecoration('Email'),
+                    ),
+                    TextFormField(
+                      controller: controller.objetivosPilatesController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Objetivo Pilates'),
+                      maxLines: 2,
+                    ),
+                    TextFormField(
+                      controller: controller.queixasController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Queixas'),
+                    ),
+                    // Aula
+                    Container(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            child: Text(
+                              'Aula',
+                              style: TextStyle(
+                                  color: AppColors.label, fontSize: 12),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            width: double.infinity,
+                            child: FittedBox(
+                              alignment: Alignment.topLeft,
+                              fit: BoxFit.scaleDown,
+                              child: ToggleButtons(
+                                children: [
+                                  Text('SEG',
+                                      style: TextStyle(color: AppColors.texto)),
+                                  Text('TER',
+                                      style: TextStyle(color: AppColors.texto)),
+                                  Text('QUA',
+                                      style: TextStyle(color: AppColors.texto)),
+                                  Text('QUI',
+                                      style: TextStyle(color: AppColors.texto)),
+                                  Text('SEX',
+                                      style: TextStyle(color: AppColors.texto)),
+                                  Text('SAB',
+                                      style: TextStyle(color: AppColors.texto)),
+                                ],
+                                fillColor: Theme.of(context).accentColor,
+                                isSelected: controller.aulaDiaSelecionado,
+                                onPressed: (int index) {
+                                  setState(() {
+                                    controller.aulaDiaSelecionado[index] =
+                                        !controller.aulaDiaSelecionado[index];
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextFormField(
+                      controller: controller.aulaHorarioIniController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Horário Início'),
+                    ),
+                    TextFormField(
+                      controller: controller.aulaHorarioFimController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Horário Fim'),
+                    ),
+                    // Forma Pagamento
+                    DropdownButtonFormField<String>(
+                      value: controller.formaPagamento,
+                      items: getListaFormaPagamento(
+                          controller.formaPagamentoItens),
+                      onChanged: (String? value) {
+                        setState(() {
+                          controller.formaPagamento = value;
+                        });
+                      },
+                      decoration: Estilos.getDecoration('Forma Pagamento'),
+                    ),
+                    // Dia Pagamento
+                    TextFormField(
+                      controller: controller.diaPagamentoController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.number,
+                      decoration: Estilos.getDecoration('Dia Pagamento'),
+                    ),
                   ],
                 ),
-                TextFormField(
-                  controller: controller.nomeController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Nome'),
-                  validator: (String? value) {
-                    return Validacoes.validarCampoObrigatorio(
-                        value, 'Nome deve ser informado!');
-                  },
-                ),
-                TextFormField(
-                  controller: controller.idadeController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.number,
-                  decoration: Estilos.getDecoration('Idade'),
-                ),
-                TextFormField(
-                  controller: controller.dataNascimentoController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.number,
-                  decoration:
-                      Estilos.getDecoration('Data Nascimento [Ex: 10/06/1986]'),
-                  inputFormatters: [MaskedInputFormatter("00/00/0000")],
-                  validator: (String? value) {
-                    return Validacoes.validarData(
-                        value, "Data de nascimento inválida!");
-                  },
-                ),
-                TextFormField(
-                  controller: controller.profissaoController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Profissão'),
-                ),
-                TextFormField(
-                  controller: controller.celularController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.number,
-                  decoration:
-                      Estilos.getDecoration('Celular [Ex: (47) 91234-5678]'),
-                  inputFormatters: [MaskedInputFormatter("(00) 00000-0000")],
-                ),
-                TextFormField(
-                  controller: controller.emailController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: Estilos.getDecoration('Email'),
-                ),
-                TextFormField(
-                  controller: controller.objetivosPilatesController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Objetivo Pilates'),
-                  maxLines: 2,
-                ),
-                TextFormField(
-                  controller: controller.queixasController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Queixas'),
-                ),
-                // Aula
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        child: Text(
-                          'Aula',
-                          style:
-                              TextStyle(color: AppColors.label, fontSize: 12),
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Container(
-                        width: double.infinity,
-                        child: FittedBox(
-                          alignment: Alignment.topLeft,
-                          fit: BoxFit.scaleDown,
-                          child: ToggleButtons(
-                            children: [
-                              Text('SEG',
-                                  style: TextStyle(color: AppColors.texto)),
-                              Text('TER',
-                                  style: TextStyle(color: AppColors.texto)),
-                              Text('QUA',
-                                  style: TextStyle(color: AppColors.texto)),
-                              Text('QUI',
-                                  style: TextStyle(color: AppColors.texto)),
-                              Text('SEX',
-                                  style: TextStyle(color: AppColors.texto)),
-                              Text('SAB',
-                                  style: TextStyle(color: AppColors.texto)),
-                            ],
-                            fillColor: Theme.of(context).accentColor,
-                            isSelected: controller.aulaDiaSelecionado,
-                            onPressed: (int index) {
-                              setState(() {
-                                controller.aulaDiaSelecionado[index] =
-                                    !controller.aulaDiaSelecionado[index];
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                TextFormField(
-                  controller: controller.aulaHorarioIniController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Horário Início'),
-                ),                
-                TextFormField(
-                  controller: controller.aulaHorarioFimController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Horário Fim'),
-                ),                
-                // Forma Pagamento
-                DropdownButtonFormField<String>(
-                  value: controller.formaPagamento,
-                  items: getListaFormaPagamento(controller.formaPagamentoItens),
-                  onChanged: (String? value) {
-                    setState(() {
-                      controller.formaPagamento = value;
-                    });
-                  },
-                  decoration: Estilos.getDecoration('Forma Pagamento'),
-                ),
-                // Dia Pagamento
-                TextFormField(
-                  controller: controller.diaPagamentoController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.number,
-                  decoration: Estilos.getDecoration('Dia Pagamento'),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.save),
-        onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-            try {
-              Aluno aluno = await controller.persistir();
-              Navigator.pop(context, aluno);
-            } catch (e) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(e.toString())));
-            }
-          }
-        },
-      ),
-    );
+          // Loading
+          Positioned(
+            child: RxBuilder(builder: (_) {
+              return controller.carregando.value == 1
+                  ? Container(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      color: Colors.white.withOpacity(0.1),
+                    )
+                  : Container();
+            }),
+          )
+        ]),
+        floatingActionButton: RxBuilder(builder: (_) {
+          return FloatingActionButton(
+            child: Icon(Icons.save),
+            onPressed: controller.carregando.value == 1
+                ? null
+                : () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        Aluno aluno = await controller.persistir();
+                        Navigator.pop(context, aluno);
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())));
+                      }
+                    }
+                  },
+          );
+        }));
   }
 
   List<DropdownMenuItem<String>> getListaFormaPagamento(List formas) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rx_notifier/rx_notifier.dart';
 
 import '../utils/formatos.dart';
 import '../models/aluno.dart';
@@ -22,7 +23,7 @@ class AlunoFormController {
   bool ativo = true;
   final formaPagamentoItens = ['Pix', 'Dinheiro', 'Depósito', 'DOC'];
   String formaPagamento = 'Pix';
-  final carregando = false;
+  var carregando = RxNotifier<int>(0);
 
   void carregar(Aluno? aluno) {
     if (aluno != null) {
@@ -50,34 +51,39 @@ class AlunoFormController {
   }
 
   Future<Aluno> persistir() async {
-    Aluno aluno = Aluno();    
-    aluno.nome = nomeController.text;
-    aluno.idade = int.tryParse(idadeController.text) ?? 0;
-    aluno.dataNascimento = Formatos.data.parse(dataNascimentoController.text);
-    aluno.profissao = profissaoController.text;
-    aluno.celular = celularController.text;
-    aluno.email = emailController.text;
-    aluno.objetivosPilates = objetivosPilatesController.text;
-    aluno.queixas = queixasController.text;
-    aluno.formaPagamento = formaPagamento;
-    aluno.diaPagamento = int.tryParse(diaPagamentoController.text) ?? 0;
-    aluno.aulaSeg = aulaDiaSelecionado[0];
-    aluno.aulaTer = aulaDiaSelecionado[1];
-    aluno.aulaQua = aulaDiaSelecionado[2];
-    aluno.aulaQui = aulaDiaSelecionado[3];
-    aluno.aulaSex = aulaDiaSelecionado[4];
-    aluno.aulaSab = aulaDiaSelecionado[5];
-    aluno.aulaHorarioIni = aulaHorarioIniController.text;
-    aluno.aulaHorarioFim = aulaHorarioFimController.text;
-    aluno.ativo = ativo;
-    Aluno alunoRetorno;  
-    if (idAluno == null) {
-      alunoRetorno = await _repository.inserir(aluno);
-    } else {
-      aluno.id = idAluno;
-      alunoRetorno = await _repository.atualizar(aluno);
-    }  
-    return alunoRetorno;
+    try {
+      carregando.value = 1;
+      Aluno aluno = Aluno();    
+      aluno.nome = nomeController.text;
+      aluno.idade = int.tryParse(idadeController.text) ?? 0;
+      aluno.dataNascimento = Formatos.data.parse(dataNascimentoController.text);
+      aluno.profissao = profissaoController.text;
+      aluno.celular = celularController.text;
+      aluno.email = emailController.text;
+      aluno.objetivosPilates = objetivosPilatesController.text;
+      aluno.queixas = queixasController.text;
+      aluno.formaPagamento = formaPagamento;
+      aluno.diaPagamento = int.tryParse(diaPagamentoController.text) ?? 0;
+      aluno.aulaSeg = aulaDiaSelecionado[0];
+      aluno.aulaTer = aulaDiaSelecionado[1];
+      aluno.aulaQua = aulaDiaSelecionado[2];
+      aluno.aulaQui = aulaDiaSelecionado[3];
+      aluno.aulaSex = aulaDiaSelecionado[4];
+      aluno.aulaSab = aulaDiaSelecionado[5];
+      aluno.aulaHorarioIni = aulaHorarioIniController.text;
+      aluno.aulaHorarioFim = aulaHorarioFimController.text;
+      aluno.ativo = ativo;
+      Aluno alunoRetorno;  
+      if (idAluno == null) {
+        alunoRetorno = await _repository.inserir(aluno);
+      } else {
+        aluno.id = idAluno;
+        alunoRetorno = await _repository.atualizar(aluno);
+      }  
+      return alunoRetorno;
+    } finally {
+      carregando.value = 0;
+    }
   }
 
   void dispose() {

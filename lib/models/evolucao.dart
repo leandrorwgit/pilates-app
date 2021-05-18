@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'aluno.dart';
 
 class Evolucao {
@@ -20,17 +22,33 @@ class Evolucao {
       this.comoSaiu,
       this.orientacoesDomiciliares});
 
-  static Evolucao getTeste() {
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'aluno': aluno?.toMap(),
+      'data': data?.toIso8601String(),
+      'comoChegou': comoChegou,
+      'condutasUtilizadas': condutasUtilizadas,
+      'aparelhosUtilizados': aparelhosUtilizados,
+      'comoSaiu': comoSaiu,
+      'orientacoesDomiciliares': orientacoesDomiciliares,
+    };
+  }
+
+  factory Evolucao.fromMap(Map<String, dynamic> map) {
     return Evolucao(
-      id: 1,
-      //aluno: Aluno.getTeste(),
-      data: DateTime.now(),
-      comoChegou: 'Disposto e sem queixas',
-      condutasUtilizadas:
-          'Fortalecimento de MMSS, MMII, abdômen e coluna lombar; estabilização escapular e pélvica; mobilização de ombros, quadris e coluna vertebral; alongamento de cadeia lateral de tronco e MMII',
-      aparelhosUtilizados: 'Chair;Cadillac',
-      comoSaiu: 'Bem e sem queixas',
-      orientacoesDomiciliares: 'Nenhuma',
+      id: map['id'],
+      aluno: Aluno.fromMap(map['aluno']),
+      data: DateTime.parse(map['data']),
+      comoChegou: map['comoChegou'],
+      condutasUtilizadas: map['condutasUtilizadas'],
+      aparelhosUtilizados: map['aparelhosUtilizados'],
+      comoSaiu: map['comoSaiu'],
+      orientacoesDomiciliares: map['orientacoesDomiciliares'],
     );
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory Evolucao.fromJson(String source) => Evolucao.fromMap(json.decode(source));
 }
