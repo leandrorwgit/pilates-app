@@ -1,11 +1,12 @@
-import 'package:app_pilates/utils/formatos.dart';
+import 'package:app_pilates/models/aluno.dart';
+import 'package:app_pilates/utils/validacoes.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:rx_notifier/rx_notifier.dart';
 
+import '../utils/formatos.dart';
 import '../models/evolucao.dart';
 
 import '../utils/estilos.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-
-import '../utils/validacoes.dart';
 
 import 'evolucao_form_controller.dart';
 import '../utils/app_colors.dart';
@@ -35,122 +36,176 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
     final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-            widget.evolucao == null ? 'Nova Evolução' : 'Alterar Evolução'),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: controller.alunoController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Aluno'),
-                  validator: (String? value) {
-                    return Validacoes.validarCampoObrigatorio(
-                        value, 'Aluno deve ser informado!');
-                  },
-                ),
-                TextFormField(
-                  readOnly: true,
-                  controller: controller.dataController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration(
-                    'Data',
-                    suffixIcon: IconButton(
-                      onPressed: () => _selecionarData(context),
-                      icon: Icon(Icons.calendar_today, color: AppColors.label),
-                    ),
-                  ),
-                ),
-                TextFormField(
-                  controller: controller.comoChegouController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Como chegou'),
-                ),
-                TextFormField(
-                  controller: controller.condutasUtilizadasController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Condutas utilizadas'),
-                  maxLines: 4,
-                ),
+        appBar: AppBar(
+          title: Text(
+              widget.evolucao == null ? 'Nova Evolução' : 'Alterar Evolução'),
+        ),
+        body: Stack(children: [
+          Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TypeAheadFormField<Aluno>(
+                      textFieldConfiguration: TextFieldConfiguration(
+                        style: TextStyle(color: AppColors.texto),
+                        decoration: Estilos.getDecoration('Aluno'),
+                        controller: controller.alunoController,
+                      ),
 
-                // Aparelhos utilizados
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        child: Text(
-                          'Aparelhos utilizados',
-                          style:
-                              TextStyle(color: AppColors.label, fontSize: 12),
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Container(
-                        width: double.infinity,
-                        child: FittedBox(
-                          alignment: Alignment.topLeft,
-                          fit: BoxFit.scaleDown,
-                          child: ToggleButtons(
-                            children: controller.aparelhosItens.map<Widget>((aparelho) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(aparelho,
-                                    style: TextStyle(color: AppColors.texto)),
-                              );
-                            }).toList(),
-                            fillColor: Theme.of(context).accentColor,
-                            isSelected: controller.aparelhosSelecionados,
-                            onPressed: (int index) {
-                              setState(() {
-                                controller.aparelhosSelecionados[index] =
-                                    !controller.aparelhosSelecionados[index];
-                              });
-                            },
+                      suggestionsCallback: (pattern) async {
+                        return await controller.buscarAlunos(pattern+"%");
+                      },
+                      itemBuilder: (context, Aluno suggestion) {
+                        return ListTile(
+                          title: Text(suggestion.nome!,
+                              style: TextStyle(color: AppColors.texto)),
+                        );
+                      },
+                      noItemsFoundBuilder: (_) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            'Nenhum aluno encontrado!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppColors.label),
                           ),
+                        );
+                      },
+                      onSuggestionSelected: (Aluno suggestion) {
+                        controller.alunoSelecionado = suggestion;
+                        controller.alunoController.text = suggestion.nome;
+                      },
+                      validator: (String? value) {
+                        return Validacoes.validarCampoObrigatorio(
+                            value, 'Aluno deve ser informado!');
+                      },
+                    ),
+                    TextFormField(
+                      readOnly: true,
+                      controller: controller.dataController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration(
+                        'Data',
+                        suffixIcon: IconButton(
+                          onPressed: () => _selecionarData(context),
+                          icon: Icon(Icons.calendar_today,
+                              color: AppColors.label),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    TextFormField(
+                      controller: controller.comoChegouController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Como chegou'),
+                    ),
+                    TextFormField(
+                      controller: controller.condutasUtilizadasController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Condutas utilizadas'),
+                      maxLines: 4,
+                    ),
+
+                    // Aparelhos utilizados
+                    Container(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            child: Text(
+                              'Aparelhos utilizados',
+                              style: TextStyle(
+                                  color: AppColors.label, fontSize: 12),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            width: double.infinity,
+                            child: FittedBox(
+                              alignment: Alignment.topLeft,
+                              fit: BoxFit.scaleDown,
+                              child: ToggleButtons(
+                                children: controller.aparelhosItens
+                                    .map<Widget>((aparelho) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: Text(aparelho,
+                                        style:
+                                            TextStyle(color: AppColors.texto)),
+                                  );
+                                }).toList(),
+                                fillColor: Theme.of(context).accentColor,
+                                isSelected: controller.aparelhosSelecionados,
+                                onPressed: (int index) {
+                                  setState(() {
+                                    controller.aparelhosSelecionados[index] =
+                                        !controller
+                                            .aparelhosSelecionados[index];
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextFormField(
+                      controller: controller.comoSaiuController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Como saiu'),
+                    ),
+                    TextFormField(
+                      controller: controller.orientacoesDomiciliaresController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration:
+                          Estilos.getDecoration('Orientações domiciliares'),
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  controller: controller.comoSaiuController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Como saiu'),
-                ),
-                TextFormField(
-                  controller: controller.orientacoesDomiciliaresController,
-                  style: TextStyle(color: AppColors.texto),
-                  keyboardType: TextInputType.text,
-                  decoration: Estilos.getDecoration('Orientações domiciliares'),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.save),
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            Evolucao evolucao = controller.persistir();
-            Navigator.pop(context, evolucao);
-          }
-        },
-      ),
-    );
+          // Loading
+          Positioned(
+            child: RxBuilder(builder: (_) {
+              return controller.carregando.value == 1
+                  ? Container(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      color: Colors.white.withOpacity(0.1),
+                    )
+                  : Container();
+            }),
+          )
+        ]),
+        floatingActionButton: RxBuilder(builder: (_) {
+          return FloatingActionButton(
+            child: Icon(Icons.save),
+            onPressed: controller.carregando.value == 1
+                ? null
+                : () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        Evolucao evolucao = await controller.persistir();
+                        Navigator.pop(context, evolucao);
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())));
+                      }
+                    }
+                  },
+          );
+        }));
   }
 
   Future<void> _selecionarData(BuildContext context) async {

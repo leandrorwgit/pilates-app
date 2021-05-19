@@ -83,12 +83,11 @@ class _AlunoListaViewState extends State<AlunoListaView> {
     final result = await Navigator.of(context)
         .pushNamed(Rotas.ALUNO_FORM, arguments: aluno);
     if (result != null) {
-      // Se retornou um usuário é porque alterou, então atualiza busca
+      // Se retornou um registro é porque alterou, então atualiza busca
       setState(() {
         _listaAlunosFuture = _controller.buscar();
       });
     }
-
   }
 
   void _excluirAluno(Aluno aluno) {

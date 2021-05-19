@@ -1,3 +1,4 @@
+import 'package:app_pilates/utils/componentes.dart';
 import 'package:app_pilates/utils/estilos.dart';
 import 'package:app_pilates/utils/formatos.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +16,16 @@ class EvolucaoListaView extends StatefulWidget {
 }
 
 class _EvolucaoListaViewState extends State<EvolucaoListaView> {
-  late final controller;
+  late EvolucaoListaController _controller;
+  late Future<List<Evolucao>> _listaEvolucaoFuture;
   final filtroNomeController = TextEditingController(text: '');
   final filtroDataController = TextEditingController(text: '');
 
   @override
   void initState() {
     super.initState();
-    controller = EvolucaoListaController();
+    _controller = EvolucaoListaController();
+    _listaEvolucaoFuture = _controller.buscar();
   }
 
   @override
@@ -106,39 +109,49 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
           ),
         ),
       ),
-      body: RxBuilder(builder: (ctx) {
-        return ListView.separated(
-          padding: EdgeInsets.all(10),
-          separatorBuilder: (context, index) => Divider(
-            color: Colors.black,
-          ),
-          itemCount: controller.evolucoes.length,
-          itemBuilder: (ctx, index) {
-            var evolucao = controller.evolucoes[index];
-            return ListTile(
-              title: Text(
-                  Formatos.data.format(evolucao.data) +
-                      ' - ' +
-                      (evolucao.aluno?.nome ?? ''),
-                  style: TextStyle(
-                    color: AppColors.texto,
-                  )),
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.delete,
-                  color: AppColors.delete,
+      body: FutureBuilder(
+          future: this._listaEvolucaoFuture,
+          builder: (BuildContext context, AsyncSnapshot<List<Evolucao>> snapshot) {
+            if (snapshot.hasError) {
+              return Componentes.erroRest(snapshot);
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return ListView.separated(
+                padding: EdgeInsets.all(10),
+                separatorBuilder: (context, index) => Divider(
+                  color: Colors.black,
                 ),
-                onPressed: () {
-                  _excluirEvolucao(evolucao);
+                itemCount: snapshot.data!.length,
+                itemBuilder: (ctx, index) {
+                  var evolucao = snapshot.data![index];
+                  return ListTile(
+                    title: Text(
+                        Formatos.data.format(evolucao.data!) +
+                            ' - ' +
+                            (evolucao.aluno?.nome ?? ''),
+                        style: TextStyle(
+                          color: AppColors.texto,
+                        )),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: AppColors.delete,
+                      ),
+                      onPressed: () {
+                        _excluirEvolucao(evolucao);
+                      },
+                    ),
+                    onTap: () {
+                      _abrirFormulario(evolucao);
+                    },
+                  );
                 },
-              ),
-              onTap: () {
-                _abrirFormulario(evolucao);
-              },
-            );
-          },
-        );
-      }),
+              );
+            }
+          }),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -174,16 +187,21 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
   Future<void> _abrirFormulario(Evolucao? evolucao) async {
     final result = await Navigator.of(context)
         .pushNamed(Rotas.EVOLUCAO_FORM, arguments: evolucao);
-    controller.evolucoes.add(result);
-  }
+    if (result != null) {
+      // Se retornou um registro é porque alterou, então atualiza busca
+      setState(() {
+        _listaEvolucaoFuture = _controller.buscar();
+      });
+    }
+  }  
 
   void _excluirEvolucao(Evolucao evolucao) {
-    controller.evolucoes.remove(evolucao);
+    //controller.evolucoes.remove(evolucao);
   }
 
   @override
   void dispose() {
     super.dispose();
-    controller.dispose();
+    _controller.dispose();
   }
 }

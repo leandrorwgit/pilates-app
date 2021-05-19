@@ -27,6 +27,10 @@ class AlunoRepository {
       params['ativo'] = ativo;
 
     var res = await dio.get('aluno', queryParameters: params);
-    return res.data.map<Aluno>((c) => Aluno.fromMap(c)).toList() as List<Aluno>;
+    if (res.data != null) {
+      return res.data.map<Aluno>((c) => Aluno.fromMap(c)).toList() as List<Aluno>;
+    } else {
+      return [];
+    }
   }
 }

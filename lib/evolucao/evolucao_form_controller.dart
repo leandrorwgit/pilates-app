@@ -1,16 +1,16 @@
-import 'dart:math';
-
 import 'package:rx_notifier/rx_notifier.dart';
+import 'package:flutter/material.dart';
 
+import '../aluno/aluno_repository.dart';
 import '../models/aluno.dart';
 import '../utils/formatos.dart';
-import 'package:flutter/material.dart';
 
 import '../models/evolucao.dart';
 import 'evolucao_repository.dart';
 
 class EvolucaoFormController {
   final _repository = EvolucaoRepository();
+  final _repositoryAlunos = AlunoRepository();
   var evolucao = Evolucao();
   var alunoSelecionado = Aluno();
   int? idEvolucao;
@@ -58,6 +58,7 @@ class EvolucaoFormController {
   void carregar(Evolucao? evolucao) {
     if (evolucao != null) {
       this.evolucao = evolucao;
+      this.alunoSelecionado = evolucao.aluno!;
       idEvolucao = evolucao.id;
       alunoController.text = evolucao.aluno?.nome ?? '';
       dataController.text = Formatos.data
@@ -95,6 +96,10 @@ class EvolucaoFormController {
     } finally {
       carregando.value = 0;
     }
+  }
+
+  Future<List<Aluno>> buscarAlunos(String nome) async {
+    return _repositoryAlunos.buscar(nome, null);
   }
     
   void dispose() {

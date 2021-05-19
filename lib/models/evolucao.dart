@@ -25,7 +25,7 @@ class Evolucao {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'aluno': aluno?.toMap(),
+      'idAluno': aluno?.id,
       'data': data?.toIso8601String(),
       'comoChegou': comoChegou,
       'condutasUtilizadas': condutasUtilizadas,
@@ -38,7 +38,7 @@ class Evolucao {
   factory Evolucao.fromMap(Map<String, dynamic> map) {
     return Evolucao(
       id: map['id'],
-      aluno: Aluno.fromMap(map['aluno']),
+      aluno: Aluno(id: map['aluno']?['id'], nome: map['aluno']?['nome']),
       data: DateTime.parse(map['data']),
       comoChegou: map['comoChegou'],
       condutasUtilizadas: map['condutasUtilizadas'],
