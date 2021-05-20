@@ -18,8 +18,8 @@ class AlunoFormController {
   final queixasController = TextEditingController(text: '');
   final diaPagamentoController = TextEditingController(text: '');
   List<bool> aulaDiaSelecionado = [false, false, false, false, false, false];
-  final aulaHorarioIniController = TextEditingController(text: '');
-  final aulaHorarioFimController = TextEditingController(text: '');
+  final aulaHorarioInicioController = TextEditingController(text: '');
+  final aulaDuracaoController = TextEditingController(text: '');
   bool ativo = true;
   final formaPagamentoItens = ['Pix', 'Dinheiro', 'Depósito', 'DOC'];
   String formaPagamento = 'Pix';
@@ -44,8 +44,8 @@ class AlunoFormController {
       aulaDiaSelecionado[3] = aluno.aulaQui ?? false;
       aulaDiaSelecionado[4] = aluno.aulaSex ?? false;
       aulaDiaSelecionado[5] = aluno.aulaSab ?? false;
-      aulaHorarioIniController.text = aluno.aulaHorarioIni ?? '';
-      aulaHorarioFimController.text = aluno.aulaHorarioFim ?? '';
+      aulaHorarioInicioController.text = aluno.aulaHorarioInicio ?? '';
+      aulaDuracaoController.text = aluno.aulaDuracao != null ? aluno.aulaDuracao.toString() : '';
       ativo = aluno.ativo ?? false;       
     }
   }
@@ -70,8 +70,8 @@ class AlunoFormController {
       aluno.aulaQui = aulaDiaSelecionado[3];
       aluno.aulaSex = aulaDiaSelecionado[4];
       aluno.aulaSab = aulaDiaSelecionado[5];
-      aluno.aulaHorarioIni = aulaHorarioIniController.text;
-      aluno.aulaHorarioFim = aulaHorarioFimController.text;
+      aluno.aulaHorarioInicio = aulaHorarioInicioController.text;
+      aluno.aulaDuracao = int.tryParse(aulaDuracaoController.text) ?? 0;
       aluno.ativo = ativo;
       Aluno alunoRetorno;  
       if (idAluno == null) {
@@ -96,7 +96,7 @@ class AlunoFormController {
     objetivosPilatesController.dispose();
     queixasController.dispose();
     diaPagamentoController.dispose();
-    aulaHorarioIniController.dispose();
-    aulaHorarioFimController.dispose();
+    aulaHorarioInicioController.dispose();
+    aulaDuracaoController.dispose();
   }
 }

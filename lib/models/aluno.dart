@@ -18,8 +18,8 @@ class Aluno {
   bool? aulaQui;
   bool? aulaSex;
   bool? aulaSab;
-  String? aulaHorarioIni;
-  String? aulaHorarioFim;
+  String? aulaHorarioInicio;
+  int? aulaDuracao;
   bool? ativo;
 
   Aluno({
@@ -40,8 +40,8 @@ class Aluno {
       this.aulaQui,
       this.aulaSex,
       this.aulaSab,
-      this.aulaHorarioIni,
-      this.aulaHorarioFim,
+      this.aulaHorarioInicio,
+      this.aulaDuracao,
       this.ativo});
 
   Map<String, dynamic> toMap() {
@@ -63,8 +63,8 @@ class Aluno {
       'aulaQui': aulaQui,
       'aulaSex': aulaSex,
       'aulaSab': aulaSab,
-      'aulaHorarioIni': aulaHorarioIni,
-      'aulaHorarioFim': aulaHorarioFim,
+      'aulaHorarioInicio': aulaHorarioInicio,
+      'aulaDuracao': aulaDuracao,
       'ativo': ativo,
     };
   }
@@ -88,8 +88,8 @@ class Aluno {
       aulaQui: map['aulaQui'],
       aulaSex: map['aulaSex'],
       aulaSab: map['aulaSab'],
-      aulaHorarioIni: map['aulaHorarioIni'],
-      aulaHorarioFim: map['aulaHorarioFim'],
+      aulaHorarioInicio: map['aulaHorarioInicio'],
+      aulaDuracao: map['aulaDuracao'],
       ativo: map['ativo'],
     );
   }

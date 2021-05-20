@@ -1,7 +1,7 @@
 import 'package:rx_notifier/rx_notifier.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 import '../utils/estilos.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 import '../utils/validacoes.dart';
 
@@ -22,6 +22,7 @@ class AlunoFormView extends StatefulWidget {
 class _AlunoFormViewState extends State<AlunoFormView> {
   final _formKey = GlobalKey<FormState>();
   late final controller;
+  TimeOfDay horaSelecionada = TimeOfDay(hour: 07, minute: 00);
 
   @override
   void initState() {
@@ -171,17 +172,33 @@ class _AlunoFormViewState extends State<AlunoFormView> {
                         ],
                       ),
                     ),
-                    TextFormField(
-                      controller: controller.aulaHorarioIniController,
-                      style: TextStyle(color: AppColors.texto),
-                      keyboardType: TextInputType.text,
-                      decoration: Estilos.getDecoration('Horário Início'),
+                    InkWell(
+                      onTap: () {
+                        _selecionarHora(context);
+                      },
+                      child: TextFormField(
+                        controller: controller.aulaHorarioInicioController,
+                        enabled: false,
+                        style: TextStyle(color: AppColors.texto),
+                        keyboardType: TextInputType.text,
+                        decoration: Estilos.getDecoration(
+                            'Horário de início [Ex: 7:00]'),
+                        validator: (String? value) {
+                          return Validacoes.validarCampoObrigatorio(
+                              value, 'Horário de início deve ser informado!');
+                        },
+                      ),
                     ),
                     TextFormField(
-                      controller: controller.aulaHorarioFimController,
+                      controller: controller.aulaDuracaoController,
                       style: TextStyle(color: AppColors.texto),
-                      keyboardType: TextInputType.text,
-                      decoration: Estilos.getDecoration('Horário Fim'),
+                      keyboardType: TextInputType.number,
+                      decoration: Estilos.getDecoration(
+                          'Duração da aula (minutos) [Ex: 45]'),
+                      validator: (String? value) {
+                        return Validacoes.validarCampoObrigatorio(
+                            value, 'Duração da aula deve ser informada!');
+                      },
                     ),
                     // Forma Pagamento
                     DropdownButtonFormField<String>(
@@ -252,6 +269,20 @@ class _AlunoFormViewState extends State<AlunoFormView> {
       );
     }
     return items;
+  }
+
+  Future<Null> _selecionarHora(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: horaSelecionada,
+    );
+    if (picked != null) {
+      setState(() {
+        horaSelecionada = picked;
+        controller.aulaHorarioInicioController.text =
+            horaSelecionada.format(context).split(" ")[0];
+      });
+    }
   }
 
   @override
