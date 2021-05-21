@@ -172,22 +172,21 @@ class _AlunoFormViewState extends State<AlunoFormView> {
                         ],
                       ),
                     ),
-                    InkWell(
+                    TextFormField(
+                      controller: controller.aulaHorarioInicioController,
+                      readOnly: true,
                       onTap: () {
                         _selecionarHora(context);
                       },
-                      child: TextFormField(
-                        controller: controller.aulaHorarioInicioController,
-                        enabled: false,
-                        style: TextStyle(color: AppColors.texto),
-                        keyboardType: TextInputType.text,
-                        decoration: Estilos.getDecoration(
-                            'Horário de início [Ex: 7:00]'),
-                        validator: (String? value) {
-                          return Validacoes.validarCampoObrigatorio(
-                              value, 'Horário de início deve ser informado!');
-                        },
-                      ),
+                      autovalidateMode: AutovalidateMode.always,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration:
+                          Estilos.getDecoration('Horário de início [Ex: 7:00]'),
+                      validator: (String? value) {
+                        return Validacoes.validarCampoObrigatorio(
+                            value, 'Horário de início deve ser informado!');
+                      },
                     ),
                     TextFormField(
                       controller: controller.aulaDuracaoController,
@@ -275,6 +274,17 @@ class _AlunoFormViewState extends State<AlunoFormView> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: horaSelecionada,
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: AppColors.texto,
+              onSurface: AppColors.label,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {

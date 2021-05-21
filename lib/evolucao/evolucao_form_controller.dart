@@ -25,18 +25,16 @@ class EvolucaoFormController {
     'Reformer',
     'Chair',
     'Barrel',
-    'Solo',
     'Mat'
   ];
-  List<bool> aparelhosSelecionados = [false, false, false, false, false, false];
+  List<bool> aparelhosSelecionados = [false, false, false, false, false];
   var carregando = RxNotifier<int>(0);
 
   List<bool> aparelhosToList(String? aparelhosUtilizados) {
-    final retorno = [false, false, false, false, false, false];
+    final retorno = [false, false, false, false, false];
     if (aparelhosUtilizados != null && aparelhosUtilizados.isNotEmpty) {
       aparelhosUtilizados.split(';').forEach((element) {
         var indexOf = aparelhosItens.indexOf(element);
-        print(indexOf);
         if (indexOf >= 0) retorno[indexOf] = true;
       });
     }

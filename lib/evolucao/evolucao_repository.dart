@@ -18,6 +18,12 @@ class EvolucaoRepository {
     return Evolucao.fromMap(res.data);    
   }  
 
+  Future<bool> excluir(int id) async {
+    var dio = CustomDio.comAutenticacao().instancia;
+    var res = await dio.delete('evolucao/'+id.toString());
+    return res.statusCode != null && res.statusCode == 204;
+  }
+
   Future<List<Evolucao>> buscar(int? idAluno, String? data) async {
     var dio = CustomDio.comAutenticacao().instancia;
     var params = Map<String, dynamic>();

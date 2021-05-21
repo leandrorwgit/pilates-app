@@ -111,7 +111,8 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
       ),
       body: FutureBuilder(
           future: this._listaEvolucaoFuture,
-          builder: (BuildContext context, AsyncSnapshot<List<Evolucao>> snapshot) {
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Evolucao>> snapshot) {
             if (snapshot.hasError) {
               return Componentes.erroRest(snapshot);
             } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -193,10 +194,46 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
         _listaEvolucaoFuture = _controller.buscar();
       });
     }
-  }  
+  }
 
-  void _excluirEvolucao(Evolucao evolucao) {
-    //controller.evolucoes.remove(evolucao);
+  void _excluirEvolucao(Evolucao evolucao) async {
+    final result = await showDialog(
+      context: context,      
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Exclusão', style: TextStyle(color: AppColors.label)),
+          backgroundColor: AppColors.background,
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Text('Confirmar exlusão do item', style: TextStyle(color: AppColors.texto)),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Sim', style: TextStyle(color: AppColors.texto)),
+              onPressed: () async {
+                Navigator.of(context).pop(_controller.excluir(evolucao.id!));
+              },
+            ),
+            TextButton(
+              child: Text('Não', style: TextStyle(color: AppColors.label)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    if (result != null) {
+      // Se retornou é porque ecluiu, então atualiza busca
+      setState(() {
+        _listaEvolucaoFuture = _controller.buscar();
+      });
+    }
   }
 
   @override

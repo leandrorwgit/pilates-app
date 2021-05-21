@@ -24,6 +24,10 @@ class AppPilates extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+        child: child!,
+      ),
       debugShowCheckedModeBanner: false,
       title: 'Pilates',
       theme: ThemeData(

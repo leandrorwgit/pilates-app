@@ -90,8 +90,45 @@ class _AlunoListaViewState extends State<AlunoListaView> {
     }
   }
 
-  void _excluirAluno(Aluno aluno) {
-    //controller.alunos.remove(aluno);
+  void _excluirAluno(Aluno aluno) async {
+    final result = await showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Exclusão', style: TextStyle(color: AppColors.label)),
+          backgroundColor: AppColors.background,
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Text('Confirmar exlusão do item',
+                    style: TextStyle(color: AppColors.texto)),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Sim', style: TextStyle(color: AppColors.texto)),
+              onPressed: () async {
+                Navigator.of(context).pop(_controller.excluir(aluno.id!));
+              },
+            ),
+            TextButton(
+              child: Text('Não', style: TextStyle(color: AppColors.label)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    if (result != null) {
+      // Se retornou é porque ecluiu, então atualiza busca
+      setState(() {
+        _listaAlunosFuture = _controller.buscar();
+      });
+    }
   }
 
   @override

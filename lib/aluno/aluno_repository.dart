@@ -18,6 +18,12 @@ class AlunoRepository {
     return Aluno.fromMap(res.data);    
   }  
 
+  Future<bool> excluir(int id) async {
+    var dio = CustomDio.comAutenticacao().instancia;
+    var res = await dio.delete('aluno/'+id.toString());
+    return res.statusCode != null && res.statusCode == 204;
+  }  
+
   Future<List<Aluno>> buscar(String? nome, bool? ativo) async {
     var dio = CustomDio.comAutenticacao().instancia;
     var params = Map<String, dynamic>();
