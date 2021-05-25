@@ -270,7 +270,7 @@ class _AlunoFormViewState extends State<AlunoFormView> {
     return items;
   }
 
-  Future<Null> _selecionarHora(BuildContext context) async {
+  Future<void> _selecionarHora(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: horaSelecionada,

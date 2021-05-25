@@ -54,9 +54,8 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
                         decoration: Estilos.getDecoration('Aluno'),
                         controller: controller.alunoController,
                       ),
-
                       suggestionsCallback: (pattern) async {
-                        return await controller.buscarAlunos(pattern+"%");
+                        return await controller.buscarAlunos(pattern + "%");
                       },
                       itemBuilder: (context, Aluno suggestion) {
                         return ListTile(
@@ -86,15 +85,14 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
                     TextFormField(
                       readOnly: true,
                       controller: controller.dataController,
+                      onTap: () {
+                        _selecionarData(context);
+                      },
                       style: TextStyle(color: AppColors.texto),
                       keyboardType: TextInputType.text,
                       decoration: Estilos.getDecoration(
                         'Data',
-                        suffixIcon: IconButton(
-                          onPressed: () => _selecionarData(context),
-                          icon: Icon(Icons.calendar_today,
-                              color: AppColors.label),
-                        ),
+                        suffixIcon: Icon(Icons.calendar_today, color: AppColors.label),
                       ),
                     ),
                     TextFormField(
@@ -210,10 +208,22 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
 
   Future<void> _selecionarData(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: AppColors.texto,
+              onSurface: AppColors.label,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
     setState(() {
       if (picked != null)
         controller.dataController.text = Formatos.data.format(picked);

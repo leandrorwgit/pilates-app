@@ -64,14 +64,13 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
                     readOnly: true,
                     controller: filtroDataController,
                     style: TextStyle(color: AppColors.texto),
+                    onTap: () {
+                      _selecionarData(context);
+                    },
                     keyboardType: TextInputType.text,
                     decoration: Estilos.getDecoration(
                       'Data',
-                      suffixIcon: IconButton(
-                        onPressed: () => _selecionarData(context),
-                        icon:
-                            Icon(Icons.calendar_today, color: AppColors.label),
-                      ),
+                      suffixIcon: Icon(Icons.calendar_today, color: AppColors.label),
                     ),
                   ),
                   // Nome
@@ -167,7 +166,19 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        lastDate: DateTime(2101),
+        builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: AppColors.texto,
+              onSurface: AppColors.label,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
     setState(() {
       if (picked != null)
         filtroDataController.text = Formatos.data.format(picked);
