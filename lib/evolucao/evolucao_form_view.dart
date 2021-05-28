@@ -38,7 +38,7 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-              widget.evolucao == null ? 'Nova Evolução' : 'Alterar Evolução'),
+              widget.evolucao != null && widget.evolucao!.id != null ? 'Alterar Evolução' : 'Nova Evolução'),
         ),
         body: Stack(children: [
           Form(
@@ -189,7 +189,7 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
         floatingActionButton: RxBuilder(builder: (_) {
           return FloatingActionButton(
             child: Icon(Icons.save),
-            onPressed: controller.carregando.value == 1
+            onPressed: controller.carregando.value
                 ? null
                 : () async {
                     if (_formKey.currentState!.validate()) {

@@ -24,7 +24,17 @@ class EvolucaoRepository {
     return res.statusCode != null && res.statusCode == 204;
   }
 
-  Future<List<Evolucao>> buscar(int? idAluno, String? data) async {
+  Future<Evolucao> buscar(int id) async {
+    var dio = CustomDio.comAutenticacao().instancia;
+    var res = await dio.get('evolucao/'+id.toString());
+    if (res.data != null) {
+      return Evolucao.fromMap(res.data);
+    } else {
+      return Evolucao();
+    }
+  }   
+
+  Future<List<Evolucao>> listar(int? idAluno, String? data) async {
     var dio = CustomDio.comAutenticacao().instancia;
     var params = Map<String, dynamic>();
     if (idAluno != null)

@@ -25,7 +25,7 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
   void initState() {
     super.initState();
     _controller = EvolucaoListaController();
-    _listaEvolucaoFuture = _controller.buscar();
+    _listaEvolucaoFuture = _controller.listar();
   }
 
   @override
@@ -202,7 +202,7 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
     if (result != null) {
       // Se retornou um registro é porque alterou, então atualiza busca
       setState(() {
-        _listaEvolucaoFuture = _controller.buscar();
+        _listaEvolucaoFuture = _controller.listar();
       });
     }
   }
@@ -242,7 +242,7 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
     if (result != null) {
       // Se retornou é porque ecluiu, então atualiza busca
       setState(() {
-        _listaEvolucaoFuture = _controller.buscar();
+        _listaEvolucaoFuture = _controller.listar();
       });
     }
   }

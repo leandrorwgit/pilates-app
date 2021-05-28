@@ -4,8 +4,8 @@ import 'aluno_repository.dart';
 class AlunoListaController {
   final _repository = AlunoRepository();
 
-  Future<List<Aluno>> buscar() {
-    return _repository.buscar(null, null);
+  Future<List<Aluno>> listar() {
+    return _repository.listar(null, null);
   }
 
   Future<bool> excluir(int id) {

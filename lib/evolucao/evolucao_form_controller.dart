@@ -28,7 +28,7 @@ class EvolucaoFormController {
     'Mat'
   ];
   List<bool> aparelhosSelecionados = [false, false, false, false, false];
-  var carregando = RxNotifier<int>(0);
+  var carregando = RxNotifier<bool>(false);
 
   List<bool> aparelhosToList(String? aparelhosUtilizados) {
     final retorno = [false, false, false, false, false];
@@ -75,7 +75,7 @@ class EvolucaoFormController {
 
   Future<Evolucao> persistir() async {
     try {
-      carregando.value = 1;    
+      carregando.value = true;    
       evolucao.aluno = alunoSelecionado;
       evolucao.data = Formatos.data.parse(dataController.text);
       evolucao.comoChegou = comoChegouController.text;
@@ -92,12 +92,12 @@ class EvolucaoFormController {
       }  
       return evolucaoRetorno;
     } finally {
-      carregando.value = 0;
+      carregando.value = false;
     }
   }
 
   Future<List<Aluno>> buscarAlunos(String nome) async {
-    return _repositoryAlunos.buscar(nome, null);
+    return _repositoryAlunos.listar(nome, null);
   }
     
   void dispose() {

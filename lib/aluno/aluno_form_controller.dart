@@ -23,7 +23,7 @@ class AlunoFormController {
   bool ativo = true;
   final formaPagamentoItens = ['Pix', 'Dinheiro', 'Depósito', 'DOC'];
   String formaPagamento = 'Pix';
-  var carregando = RxNotifier<int>(0);
+  var carregando = RxNotifier<bool>(false);
 
   void carregar(Aluno? aluno) {
     if (aluno != null) {
@@ -52,7 +52,7 @@ class AlunoFormController {
 
   Future<Aluno> persistir() async {
     try {
-      carregando.value = 1;
+      carregando.value = true;
       Aluno aluno = Aluno();    
       aluno.nome = nomeController.text;
       aluno.idade = int.tryParse(idadeController.text) ?? 0;
@@ -82,7 +82,7 @@ class AlunoFormController {
       }  
       return alunoRetorno;
     } finally {
-      carregando.value = 0;
+      carregando.value = false;
     }
   }
 

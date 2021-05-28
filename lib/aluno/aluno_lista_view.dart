@@ -20,7 +20,7 @@ class _AlunoListaViewState extends State<AlunoListaView> {
   void initState() {
     super.initState();
     _controller = AlunoListaController();
-    _listaAlunosFuture = _controller.buscar();
+    _listaAlunosFuture = _controller.listar();
   }
 
   @override
@@ -85,7 +85,7 @@ class _AlunoListaViewState extends State<AlunoListaView> {
     if (result != null) {
       // Se retornou um registro é porque alterou, então atualiza busca
       setState(() {
-        _listaAlunosFuture = _controller.buscar();
+        _listaAlunosFuture = _controller.listar();
       });
     }
   }
@@ -126,7 +126,7 @@ class _AlunoListaViewState extends State<AlunoListaView> {
     if (result != null) {
       // Se retornou é porque ecluiu, então atualiza busca
       setState(() {
-        _listaAlunosFuture = _controller.buscar();
+        _listaAlunosFuture = _controller.listar();
       });
     }
   }

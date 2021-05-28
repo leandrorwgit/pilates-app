@@ -4,8 +4,8 @@ import 'evolucao_repository.dart';
 class EvolucaoListaController {
   final _repository = EvolucaoRepository();
 
-  Future<List<Evolucao>> buscar() {
-    return _repository.buscar(null, null);
+  Future<List<Evolucao>> listar() {
+    return _repository.listar(null, null);
   }
 
   Future<bool> excluir(int id) {
