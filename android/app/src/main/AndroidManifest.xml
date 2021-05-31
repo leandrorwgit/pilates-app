@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.app_pilates">
    <application
-        android:label="app_pilates"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Pilates"
+        android:icon="@mipmap/ic_launcher_round">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
