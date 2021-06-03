@@ -12,10 +12,15 @@ class AlunoRepository {
   }
 
   Future<Aluno> atualizar(Aluno aluno) async {
-    var dio = CustomDio.comAutenticacao().instancia;
-  
-    var res = await dio.put('aluno/'+aluno.id.toString(), data: aluno.toJson());
-    return Aluno.fromMap(res.data);    
+    try {
+      var dio = CustomDio.comAutenticacao().instancia;
+      print(aluno.toJson());
+      var res = await dio.put('aluno/'+aluno.id.toString(), data: aluno.toJson());
+      return Aluno.fromMap(res.data);    
+    } on Exception catch (e) {
+      print(e);
+      throw e;
+    }
   }  
 
   Future<bool> excluir(int id) async {

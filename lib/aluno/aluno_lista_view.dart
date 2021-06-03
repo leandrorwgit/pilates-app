@@ -1,3 +1,4 @@
+import '../utils/estilos.dart';
 import 'package:flutter/material.dart';
 
 import '../aluno/aluno_lista_controller.dart';
@@ -15,12 +16,14 @@ class AlunoListaView extends StatefulWidget {
 class _AlunoListaViewState extends State<AlunoListaView> {
   late AlunoListaController _controller;
   late Future<List<Aluno>> _listaAlunosFuture;
+  bool filtroAtivos = true;
+  final filtroNomeController = TextEditingController(text: '');
 
   @override
   void initState() {
     super.initState();
     _controller = AlunoListaController();
-    _listaAlunosFuture = _controller.listar();
+    carregarListaAluno();
   }
 
   @override
@@ -28,8 +31,86 @@ class _AlunoListaViewState extends State<AlunoListaView> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Alunos'),
+        actions: <Widget>[
+          Builder(
+            builder: (context) {
+              return IconButton(
+                icon: Icon(Icons.filter_alt),
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              );
+            },
+          )
+        ],
       ),
       drawer: AppDrawer(),
+      endDrawer: Drawer(
+        child: Container(
+          child: SafeArea(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Text(
+                    'Filtros',
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
+                  SizedBox(height: 20),
+                  // Ativos
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Somente ativos',
+                        style: TextStyle(color: AppColors.label),
+                      ),
+                      Switch(
+                          value: filtroAtivos,
+                          onChanged: (bool value) {
+                            setState(() {
+                              filtroAtivos = value;
+                            });
+                          }),
+                    ],
+                  ),
+
+                  // Nome
+                  TextField(
+                    controller: filtroNomeController,
+                    style: TextStyle(color: AppColors.texto),
+                    keyboardType: TextInputType.text,
+                    decoration: Estilos.getDecoration('Nome'),
+                  ),
+
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          child: Text('Limpar Filtros'),
+                          onPressed: () => _limparFiltros(),
+                          style: ElevatedButton.styleFrom(
+                            primary: AppColors.darkRed,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: ElevatedButton(
+                          child: Text('Aplicar'),
+                          onPressed: () => _aplicarFiltros(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
       body: FutureBuilder(
           future: this._listaAlunosFuture,
           builder: (BuildContext context, AsyncSnapshot<List<Aluno>> snapshot) {
@@ -79,13 +160,18 @@ class _AlunoListaViewState extends State<AlunoListaView> {
     );
   }
 
+  void carregarListaAluno() {
+    _listaAlunosFuture = _controller.listar(
+        filtroNomeController.text.isNotEmpty ? filtroNomeController.text+'%' : null, filtroAtivos ? filtroAtivos : null);
+  }
+
   Future<void> _abrirFormulario(Aluno? aluno) async {
     final result = await Navigator.of(context)
         .pushNamed(Rotas.ALUNO_FORM, arguments: aluno);
     if (result != null) {
       // Se retornou um registro é porque alterou, então atualiza busca
       setState(() {
-        _listaAlunosFuture = _controller.listar();
+        carregarListaAluno();
       });
     }
   }
@@ -126,13 +212,28 @@ class _AlunoListaViewState extends State<AlunoListaView> {
     if (result != null) {
       // Se retornou é porque ecluiu, então atualiza busca
       setState(() {
-        _listaAlunosFuture = _controller.listar();
+        carregarListaAluno();
       });
     }
+  }
+
+  void _limparFiltros() {
+    setState(() {
+      filtroAtivos = true;
+    });
+    filtroNomeController.text = '';
+  }
+
+  void _aplicarFiltros() {
+    Navigator.of(context).pop();
+    setState(() {
+      carregarListaAluno();
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
+    filtroNomeController.dispose();
   }
 }

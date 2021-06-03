@@ -1,12 +1,13 @@
-import 'package:app_pilates/utils/componentes.dart';
-import 'package:app_pilates/utils/estilos.dart';
-import 'package:app_pilates/utils/formatos.dart';
+import 'package:app_pilates/models/aluno.dart';
 import 'package:flutter/material.dart';
-import 'package:rx_notifier/rx_notifier.dart';
-
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import '../utils/componentes.dart';
+import '../utils/estilos.dart';
+import '../utils/formatos.dart';
 import '../models/evolucao.dart';
 import '../utils/rotas.dart';
 import '../utils/app_colors.dart';
+import 'evolucao_form_controller.dart';
 import 'evolucao_lista_controller.dart';
 import '../components/app_drawer.dart';
 
@@ -17,15 +18,20 @@ class EvolucaoListaView extends StatefulWidget {
 
 class _EvolucaoListaViewState extends State<EvolucaoListaView> {
   late EvolucaoListaController _controller;
+  late EvolucaoFormController _controllerForm;
   late Future<List<Evolucao>> _listaEvolucaoFuture;
-  final filtroNomeController = TextEditingController(text: '');
-  final filtroDataController = TextEditingController(text: '');
+  DateTime? filtroDataSelecionada = DateTime.now();
+  Aluno? filtroAlunoSelecionado;
+  final filtroAlunoController = TextEditingController(text: '');
+  final filtroDataController =
+      TextEditingController(text: Formatos.data.format(DateTime.now()));
 
   @override
   void initState() {
     super.initState();
     _controller = EvolucaoListaController();
-    _listaEvolucaoFuture = _controller.listar();
+    _controllerForm = EvolucaoFormController();
+    carregarListaEvolucao();
   }
 
   @override
@@ -70,15 +76,40 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
                     keyboardType: TextInputType.text,
                     decoration: Estilos.getDecoration(
                       'Data',
-                      suffixIcon: Icon(Icons.calendar_today, color: AppColors.label),
+                      suffixIcon:
+                          Icon(Icons.calendar_today, color: AppColors.label),
                     ),
                   ),
-                  // Nome
-                  TextField(
-                    controller: filtroNomeController,
-                    style: TextStyle(color: AppColors.texto),
-                    keyboardType: TextInputType.text,
-                    decoration: Estilos.getDecoration('Nome'),
+                  // Aluno
+                  TypeAheadField<Aluno>(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      style: TextStyle(color: AppColors.texto),
+                      decoration: Estilos.getDecoration('Aluno'),
+                      controller: filtroAlunoController,
+                    ),
+                    suggestionsCallback: (pattern) async {
+                      return await _controllerForm.buscarAlunos(pattern + "%");
+                    },
+                    itemBuilder: (context, Aluno suggestion) {
+                      return ListTile(
+                        title: Text(suggestion.nome!,
+                            style: TextStyle(color: AppColors.texto)),
+                      );
+                    },
+                    noItemsFoundBuilder: (_) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Nenhum aluno encontrado!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.label),
+                        ),
+                      );
+                    },
+                    onSuggestionSelected: (Aluno suggestion) {
+                      filtroAlunoSelecionado = suggestion;
+                      filtroAlunoController.text = suggestion.nome!;
+                    },
                   ),
                   SizedBox(height: 20),
                   Row(
@@ -161,13 +192,18 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
     );
   }
 
+  void carregarListaEvolucao() {
+    _listaEvolucaoFuture =
+        _controller.listar(filtroAlunoSelecionado?.id, filtroDataSelecionada);
+  }
+
   Future<void> _selecionarData(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101),
-        builder: (context, child) {
+      context: context,
+      initialDate: filtroDataSelecionada ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.dark(
@@ -180,20 +216,29 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
       },
     );
     setState(() {
-      if (picked != null)
-        filtroDataController.text = Formatos.data.format(picked);
-      else
+      if (picked != null) {
+        filtroDataSelecionada = picked;
+        filtroDataController.text =
+            Formatos.data.format(filtroDataSelecionada!);
+      } else {
+        filtroDataSelecionada = null;
         filtroDataController.text = '';
+      }
     });
   }
 
   void _limparFiltros() {
+    filtroDataSelecionada = null;
     filtroDataController.text = '';
-    filtroNomeController.text = '';
+    filtroAlunoSelecionado = null;
+    filtroAlunoController.text = '';
   }
 
   void _aplicarFiltros() {
     Navigator.of(context).pop();
+    setState(() {
+      carregarListaEvolucao();
+    });
   }
 
   Future<void> _abrirFormulario(Evolucao? evolucao) async {
@@ -202,14 +247,14 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
     if (result != null) {
       // Se retornou um registro é porque alterou, então atualiza busca
       setState(() {
-        _listaEvolucaoFuture = _controller.listar();
+        carregarListaEvolucao();
       });
     }
   }
 
   void _excluirEvolucao(Evolucao evolucao) async {
     final result = await showDialog(
-      context: context,      
+      context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
@@ -218,7 +263,8 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Text('Confirmar exlusão do item', style: TextStyle(color: AppColors.texto)),
+                Text('Confirmar exlusão do item',
+                    style: TextStyle(color: AppColors.texto)),
               ],
             ),
           ),
@@ -242,7 +288,7 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
     if (result != null) {
       // Se retornou é porque ecluiu, então atualiza busca
       setState(() {
-        _listaEvolucaoFuture = _controller.listar();
+        carregarListaEvolucao();
       });
     }
   }
@@ -251,5 +297,6 @@ class _EvolucaoListaViewState extends State<EvolucaoListaView> {
   void dispose() {
     super.dispose();
     _controller.dispose();
+    _controllerForm.dispose();
   }
 }

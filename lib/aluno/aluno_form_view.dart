@@ -21,7 +21,7 @@ class AlunoFormView extends StatefulWidget {
 
 class _AlunoFormViewState extends State<AlunoFormView> {
   final _formKey = GlobalKey<FormState>();
-  late final controller;
+  late final AlunoFormController controller;
   TimeOfDay horaSelecionada = TimeOfDay(hour: 07, minute: 00);
 
   @override
@@ -206,7 +206,7 @@ class _AlunoFormViewState extends State<AlunoFormView> {
                           controller.formaPagamentoItens),
                       onChanged: (String? value) {
                         setState(() {
-                          controller.formaPagamento = value;
+                          controller.formaPagamento = value!;
                         });
                       },
                       decoration: Estilos.getDecoration('Forma Pagamento'),

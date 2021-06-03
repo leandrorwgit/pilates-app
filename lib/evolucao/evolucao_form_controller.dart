@@ -97,7 +97,7 @@ class EvolucaoFormController {
   }
 
   Future<List<Aluno>> buscarAlunos(String nome) async {
-    return _repositoryAlunos.listar(nome, null);
+    return _repositoryAlunos.listar(nome, true);
   }
     
   void dispose() {
