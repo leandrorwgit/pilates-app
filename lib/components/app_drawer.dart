@@ -1,6 +1,4 @@
-import 'package:app_pilates/utils/app_colors.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../utils/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/rotas.dart';
@@ -65,6 +63,11 @@ class AppDrawer extends StatelessWidget {
             Icons.trending_up,
             'Evoluções',
             () => Navigator.of(context).pushReplacementNamed(Rotas.EVOLUCAO_LISTA),
+          ),
+          _criarItem(
+            Icons.schedule,
+            'Agendamentos',
+            () => Navigator.of(context).pushReplacementNamed(Rotas.AGENDAMENTO_LISTA),
           ),
           _criarItem(
             Icons.exit_to_app,

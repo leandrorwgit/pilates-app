@@ -1,6 +1,9 @@
 import 'agenda/agenda_view.dart';
+import 'agendamento/agendamento_form_view.dart';
+import 'agendamento/agendamento_lista_view.dart';
 import 'evolucao/evolucao_form_view.dart';
 import 'evolucao/evolucao_lista_view.dart';
+import 'models/agendamento.dart';
 import 'models/aluno.dart';
 
 import 'aluno/aluno_form_view.dart';
@@ -48,6 +51,11 @@ class AppPilates extends StatelessWidget {
         Rotas.EVOLUCAO_FORM: (ctx) => EvolucaoFormView(
             evolucao: ModalRoute.of(ctx)!.settings.arguments != null
                 ? ModalRoute.of(ctx)!.settings.arguments as Evolucao
+                : null),
+        Rotas.AGENDAMENTO_LISTA: (ctx) => AgendamentoListaView(),
+        Rotas.AGENDAMENTO_FORM: (ctx) => AgendamentoFormView(
+            agendamento: ModalRoute.of(ctx)!.settings.arguments != null
+                ? ModalRoute.of(ctx)!.settings.arguments as Agendamento
                 : null),
       },
     );
