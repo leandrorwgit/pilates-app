@@ -1,4 +1,5 @@
 import 'package:app_pilates/models/agendamento.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 
 import '../models/aluno.dart';
 import '../utils/validacoes.dart';
@@ -6,18 +7,16 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:rx_notifier/rx_notifier.dart';
 
 import '../utils/formatos.dart';
-import '../models/evolucao.dart';
+import '../models/agendamento.dart';
 
 import '../utils/estilos.dart';
 
-import '../evolucao/evolucao_form_controller.dart';
 import '../agendamento/agendamento_form_controller.dart';
 import '../utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AgendamentoFormView extends StatefulWidget {
   final Agendamento? agendamento;
-  final Evolucao? evolucao = null;
 
   AgendamentoFormView({this.agendamento});
 
@@ -26,13 +25,13 @@ class AgendamentoFormView extends StatefulWidget {
 }
 
 class _AgendamentoFormViewState extends State<AgendamentoFormView> {
-  late final controller;
+  late final AgendamentoFormController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = EvolucaoFormController();
-    controller.carregar(widget.evolucao);
+    controller = AgendamentoFormController();
+    controller.carregar(widget.agendamento);
   }
 
   @override
@@ -42,7 +41,9 @@ class _AgendamentoFormViewState extends State<AgendamentoFormView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-              widget.evolucao != null && widget.evolucao!.id != null ? 'Alterar Evolução' : 'Nova Evolução'),
+              widget.agendamento != null && widget.agendamento!.id != null
+                  ? 'Alterar Agendamento'
+                  : 'Novo Agendamento'),
         ),
         body: Stack(children: [
           Form(
@@ -79,97 +80,62 @@ class _AgendamentoFormViewState extends State<AgendamentoFormView> {
                       },
                       onSuggestionSelected: (Aluno suggestion) {
                         controller.alunoSelecionado = suggestion;
-                        controller.alunoController.text = suggestion.nome;
+                        controller.alunoController.text = suggestion.nome!;
                       },
+                    ),
+                    DateTimePicker(
+                      initialValue: DateTime.now().toString(),
+                      type: DateTimePickerType.dateTime,
+                      dateMask: 'dd/MM/yyyy HH:mm',
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                      style: TextStyle(color: AppColors.texto),
+                      decoration: Estilos.getDecoration('Data/Hora início'),
+                      timeLabelText: '',
                       validator: (String? value) {
                         return Validacoes.validarCampoObrigatorio(
-                            value, 'Aluno deve ser informado!');
+                            value, 'Data/Hora início deve ser informado!');
                       },
+                      onChanged: (val) =>
+                          controller.dataHoraInicioController.text = val,
                     ),
                     TextFormField(
-                      readOnly: true,
-                      controller: controller.dataController,
-                      onTap: () {
-                        _selecionarData(context);
-                      },
+                      controller: controller.duracaoController,
                       style: TextStyle(color: AppColors.texto),
-                      keyboardType: TextInputType.text,
-                      decoration: Estilos.getDecoration(
-                        'Data',
-                        suffixIcon: Icon(Icons.calendar_today, color: AppColors.label),
-                      ),
-                    ),
-                    TextFormField(
-                      controller: controller.comoChegouController,
-                      style: TextStyle(color: AppColors.texto),
-                      keyboardType: TextInputType.text,
-                      decoration: Estilos.getDecoration('Como chegou'),
-                    ),
-                    TextFormField(
-                      controller: controller.condutasUtilizadasController,
-                      style: TextStyle(color: AppColors.texto),
-                      keyboardType: TextInputType.text,
-                      decoration: Estilos.getDecoration('Condutas utilizadas'),
-                      maxLines: 4,
-                    ),
-
-                    // Aparelhos utilizados
-                    Container(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            child: Text(
-                              'Aparelhos utilizados',
-                              style: TextStyle(
-                                  color: AppColors.label, fontSize: 12),
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Container(
-                            width: double.infinity,
-                            child: FittedBox(
-                              alignment: Alignment.topLeft,
-                              fit: BoxFit.scaleDown,
-                              child: ToggleButtons(
-                                children: controller.aparelhosItens
-                                    .map<Widget>((aparelho) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Text(aparelho,
-                                        style:
-                                            TextStyle(color: AppColors.texto)),
-                                  );
-                                }).toList(),
-                                fillColor: Theme.of(context).accentColor,
-                                isSelected: controller.aparelhosSelecionados,
-                                onPressed: (int index) {
-                                  setState(() {
-                                    controller.aparelhosSelecionados[index] =
-                                        !controller
-                                            .aparelhosSelecionados[index];
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    TextFormField(
-                      controller: controller.comoSaiuController,
-                      style: TextStyle(color: AppColors.texto),
-                      keyboardType: TextInputType.text,
-                      decoration: Estilos.getDecoration('Como saiu'),
-                    ),
-                    TextFormField(
-                      controller: controller.orientacoesDomiciliaresController,
-                      style: TextStyle(color: AppColors.texto),
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.number,
                       decoration:
-                          Estilos.getDecoration('Orientações domiciliares'),
+                          Estilos.getDecoration('Duração (minutos) [Ex: 45]'),
+                      validator: (String? value) {
+                        return Validacoes.validarCampoObrigatorio(
+                            value, 'Duração deve ser informado!');
+                      },
+                    ),
+                    TextFormField(
+                      controller: controller.tituloController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Título'),
+                      validator: (String? value) {
+                        return Validacoes.validarCampoObrigatorio(
+                            value, 'Título deve ser informado!');
+                      },
+                    ),
+                    TextFormField(
+                      controller: controller.descricaoController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.text,
+                      decoration: Estilos.getDecoration('Descrição'),
+                    ),
+                    // Situacao
+                    DropdownButtonFormField<String>(
+                      value: controller.situacao,
+                      items: getListaSituacao(controller.situacaoItens),
+                      onChanged: (String? value) {
+                        setState(() {
+                          controller.situacao = value!;
+                        });
+                      },
+                      decoration: Estilos.getDecoration('Situação'),
                     ),
                   ],
                 ),
@@ -179,7 +145,7 @@ class _AgendamentoFormViewState extends State<AgendamentoFormView> {
           // Loading
           Positioned(
             child: RxBuilder(builder: (_) {
-              return controller.carregando.value == 1
+              return controller.carregando.value
                   ? Container(
                       child: Center(
                         child: CircularProgressIndicator(),
@@ -198,8 +164,8 @@ class _AgendamentoFormViewState extends State<AgendamentoFormView> {
                 : () async {
                     if (_formKey.currentState!.validate()) {
                       try {
-                        Evolucao evolucao = await controller.persistir();
-                        Navigator.pop(context, evolucao);
+                        Agendamento agendamento = await controller.persistir();
+                        Navigator.pop(context, agendamento);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(e.toString())));
@@ -210,30 +176,17 @@ class _AgendamentoFormViewState extends State<AgendamentoFormView> {
         }));
   }
 
-  Future<void> _selecionarData(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: ColorScheme.dark(
-              primary: AppColors.texto,
-              onSurface: AppColors.label,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    setState(() {
-      if (picked != null)
-        controller.dataController.text = Formatos.data.format(picked);
-      else
-        controller.dataController.text = '';
-    });
+  List<DropdownMenuItem<String>> getListaSituacao(List situacoes) {
+    List<DropdownMenuItem<String>> items = [];
+    for (String situacao in situacoes) {
+      items.add(
+        DropdownMenuItem(
+          value: situacao,
+          child: Text(situacao, style: TextStyle(color: AppColors.texto)),
+        ),
+      );
+    }
+    return items;
   }
 
   @override

@@ -5,93 +5,59 @@ import '../aluno/aluno_repository.dart';
 import '../models/aluno.dart';
 import '../utils/formatos.dart';
 
-import '../models/evolucao.dart';
-import '../evolucao/evolucao_repository.dart';
+import '../models/agendamento.dart';
+import '../agendamento/agendamento_repository.dart';
 import '../agendamento/agendamento_repository.dart';
 
 class AgendamentoFormController {
-  final _repository = EvolucaoRepository();
+  final _repository = AgendamentoRepository();
   final _repositoryAlunos = AlunoRepository();
-  var evolucao = Evolucao();
+  var agendamento = Agendamento();
   var alunoSelecionado = Aluno();
-  int? idEvolucao;
+  int? idAgendamento;
   final alunoController = TextEditingController(text: '');
-  final dataController = TextEditingController(text: '');
-  final comoChegouController = TextEditingController(text: '');
-  final condutasUtilizadasController = TextEditingController(text: '');
-  final comoSaiuController = TextEditingController(text: '');
-  final orientacoesDomiciliaresController = TextEditingController(text: '');
-  final aparelhosItens = [
-    'Cadillac',
-    'Reformer',
-    'Chair',
-    'Barrel',
-    'Mat'
-  ];
-  List<bool> aparelhosSelecionados = [false, false, false, false, false];
+  final dataHoraInicioController = TextEditingController(text: '');
+  final duracaoController = TextEditingController(text: '');
+  final tituloController = TextEditingController(text: '');
+  final descricaoController = TextEditingController(text: '');
+  final situacaoItens = ['CRIADO', 'CANCELADO', 'CONCLUIDO'];
+  String situacao = 'CRIADO';
   var carregando = RxNotifier<bool>(false);
 
-  List<bool> aparelhosToList(String? aparelhosUtilizados) {
-    final retorno = [false, false, false, false, false];
-    if (aparelhosUtilizados != null && aparelhosUtilizados.isNotEmpty) {
-      aparelhosUtilizados.split(';').forEach((element) {
-        var indexOf = aparelhosItens.indexOf(element);
-        if (indexOf >= 0) retorno[indexOf] = true;
-      });
-    }
-    return retorno;
-  }
-
-  String? aparelhosToString(List<bool> aparelhosSelecionados) {
-    String retorno = '';
-    for (int i = 0; i < aparelhosSelecionados.length; i++) {
-      if (aparelhosSelecionados[i] == true) {
-        retorno = retorno + aparelhosItens[i] + ';';
-      }
-    }
-    if (retorno.length > 0) 
-      retorno = retorno.substring(0, retorno.length - 1);
-    return retorno;
-  }
-
-  void carregar(Evolucao? evolucao) {
-    if (evolucao != null) {
-      this.evolucao = evolucao;
-      this.alunoSelecionado = evolucao.aluno!;
-      idEvolucao = evolucao.id;
-      alunoController.text = evolucao.aluno?.nome ?? '';
-      dataController.text = Formatos.data
-          .format(evolucao.data != null ? evolucao.data! : DateTime.now());
-      comoChegouController.text = evolucao.comoChegou ?? '';
-      condutasUtilizadasController.text = evolucao.condutasUtilizadas ?? '';
-      aparelhosSelecionados = aparelhosToList(evolucao.aparelhosUtilizados);
-      comoSaiuController.text = evolucao.comoSaiu ?? '';
-      orientacoesDomiciliaresController.text =
-          evolucao.orientacoesDomiciliares ?? '';
+  void carregar(Agendamento? agendamento) {
+    if (agendamento != null) {
+      this.agendamento = agendamento;
+      this.alunoSelecionado = agendamento.aluno!;
+      idAgendamento = agendamento.id;
+      alunoController.text = agendamento.aluno?.nome ?? '';
+      dataHoraInicioController.text = Formatos.data
+          .format(agendamento.dataHoraInicio != null ? agendamento.dataHoraInicio! : DateTime.now());
+      duracaoController.text = agendamento.duracao != null ? agendamento.duracao.toString() : '';
+      tituloController.text = agendamento.titulo ?? '';
+      descricaoController.text = agendamento.descricao ?? '';
+      situacao = agendamento.situacao ?? 'CRIADO';
     } else {
-      dataController.text = Formatos.data.format(DateTime.now());
-      alunoSelecionado.id = 1;
+      dataHoraInicioController.text = Formatos.data.format(DateTime.now());
     }
   }
 
-  Future<Evolucao> persistir() async {
+  Future<Agendamento> persistir() async {
     try {
       carregando.value = true;    
-      evolucao.aluno = alunoSelecionado;
-      evolucao.data = Formatos.data.parse(dataController.text);
-      evolucao.comoChegou = comoChegouController.text;
-      evolucao.condutasUtilizadas = condutasUtilizadasController.text;
-      evolucao.aparelhosUtilizados = aparelhosToString(aparelhosSelecionados);
-      evolucao.comoSaiu = comoSaiuController.text;
-      evolucao.orientacoesDomiciliares = orientacoesDomiciliaresController.text;
-      Evolucao evolucaoRetorno;  
-      if (idEvolucao == null) {
-        evolucaoRetorno = await _repository.inserir(evolucao);
+      agendamento.aluno = alunoSelecionado;
+      agendamento.dataHoraInicio = Formatos.data.parse(dataHoraInicioController.text);
+      agendamento.duracao = int.tryParse(duracaoController.text) ?? 0;
+      agendamento.titulo = tituloController.text;
+      agendamento.descricao = descricaoController.text;
+      agendamento.situacao = situacao;
+      Agendamento agendamentoRetorno;  
+      if (idAgendamento == null) {
+        agendamentoRetorno = await _repository.inserir(agendamento);
       } else {
-        evolucao.id = idEvolucao;
-        evolucaoRetorno = await _repository.atualizar(evolucao);
+        agendamento.id = idAgendamento;
+        agendamentoRetorno = await _repository.atualizar(agendamento);
       }  
-      return evolucaoRetorno;
+      return agendamentoRetorno;
     } finally {
       carregando.value = false;
     }
@@ -103,10 +69,9 @@ class AgendamentoFormController {
     
   void dispose() {
     alunoController.dispose();
-    dataController.dispose();
-    comoChegouController.dispose();
-    condutasUtilizadasController.dispose();
-    comoSaiuController.dispose();
-    orientacoesDomiciliaresController.dispose();
+    dataHoraInicioController.dispose();
+    duracaoController.dispose();
+    tituloController.dispose();
+    descricaoController.dispose();
   }
 }

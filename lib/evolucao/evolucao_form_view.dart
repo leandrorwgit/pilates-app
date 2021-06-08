@@ -175,7 +175,7 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
           // Loading
           Positioned(
             child: RxBuilder(builder: (_) {
-              return controller.carregando.value == 1
+              return controller.carregando.value
                   ? Container(
                       child: Center(
                         child: CircularProgressIndicator(),

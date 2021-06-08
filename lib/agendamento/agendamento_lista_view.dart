@@ -5,11 +5,9 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../utils/componentes.dart';
 import '../utils/estilos.dart';
 import '../utils/formatos.dart';
-import '../models/evolucao.dart';
+import '../models/agendamento.dart';
 import '../utils/rotas.dart';
 import '../utils/app_colors.dart';
-import '../evolucao/evolucao_form_controller.dart';
-import '../evolucao/evolucao_lista_controller.dart';
 import '../agendamento/agendamento_form_controller.dart';
 import '../agendamento/agendamento_lista_controller.dart';
 import '../components/app_drawer.dart';
@@ -20,9 +18,9 @@ class AgendamentoListaView extends StatefulWidget {
 }
 
 class _AgendamentoListaViewState extends State<AgendamentoListaView> {
-  late EvolucaoListaController _controller;
-  late EvolucaoFormController _controllerForm;
-  late Future<List<Evolucao>> _listaEvolucaoFuture;
+  late AgendamentoListaController _controller;
+  late AgendamentoFormController _controllerForm;
+  late Future<List<Agendamento>> _listaAgendamentoFuture;
   DateTime? filtroDataSelecionada = DateTime.now();
   Aluno? filtroAlunoSelecionado;
   final filtroAlunoController = TextEditingController(text: '');
@@ -32,16 +30,16 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
   @override
   void initState() {
     super.initState();
-    _controller = EvolucaoListaController();
-    _controllerForm = EvolucaoFormController();
-    carregarListaEvolucao();
+    _controller = AgendamentoListaController();
+    _controllerForm = AgendamentoFormController();
+    carregarListaAgendamento();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Evoluções'),
+        title: Text('Agendamentos'),
         actions: <Widget>[
           Builder(
             builder: (context) {
@@ -143,9 +141,9 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
         ),
       ),
       body: FutureBuilder(
-          future: this._listaEvolucaoFuture,
+          future: this._listaAgendamentoFuture,
           builder:
-              (BuildContext context, AsyncSnapshot<List<Evolucao>> snapshot) {
+              (BuildContext context, AsyncSnapshot<List<Agendamento>> snapshot) {
             if (snapshot.hasError) {
               return Componentes.erroRest(snapshot);
             } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -160,12 +158,12 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
                 ),
                 itemCount: snapshot.data!.length,
                 itemBuilder: (ctx, index) {
-                  var evolucao = snapshot.data![index];
+                  var agendamento = snapshot.data![index];
                   return ListTile(
                     title: Text(
-                        Formatos.data.format(evolucao.data!) +
+                        Formatos.data.format(agendamento.dataHoraInicio!) +
                             ' - ' +
-                            (evolucao.aluno?.nome ?? ''),
+                            (agendamento.aluno?.nome ?? ''),
                         style: TextStyle(
                           color: AppColors.texto,
                         )),
@@ -175,11 +173,11 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
                         color: AppColors.delete,
                       ),
                       onPressed: () {
-                        _excluirEvolucao(evolucao);
+                        _excluirAgendamento(agendamento);
                       },
                     ),
                     onTap: () {
-                      _abrirFormulario(evolucao);
+                      _abrirFormulario(agendamento);
                     },
                   );
                 },
@@ -195,8 +193,8 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
     );
   }
 
-  void carregarListaEvolucao() {
-    _listaEvolucaoFuture =
+  void carregarListaAgendamento() {
+    _listaAgendamentoFuture =
         _controller.listar(filtroAlunoSelecionado?.id, filtroDataSelecionada);
   }
 
@@ -240,22 +238,22 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
   void _aplicarFiltros() {
     Navigator.of(context).pop();
     setState(() {
-      carregarListaEvolucao();
+      carregarListaAgendamento();
     });
   }
 
-  Future<void> _abrirFormulario(Evolucao? evolucao) async {
+  Future<void> _abrirFormulario(Agendamento? agendamento) async {
     final result = await Navigator.of(context)
-        .pushNamed(Rotas.EVOLUCAO_FORM, arguments: evolucao);
+        .pushNamed(Rotas.AGENDAMENTO_FORM, arguments: agendamento);
     if (result != null) {
       // Se retornou um registro é porque alterou, então atualiza busca
       setState(() {
-        carregarListaEvolucao();
+        carregarListaAgendamento();
       });
     }
   }
 
-  void _excluirEvolucao(Evolucao evolucao) async {
+  void _excluirAgendamento(Agendamento agendamento) async {
     final result = await showDialog(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -275,7 +273,7 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
             TextButton(
               child: Text('Sim', style: TextStyle(color: AppColors.texto)),
               onPressed: () async {
-                Navigator.of(context).pop(_controller.excluir(evolucao.id!));
+                Navigator.of(context).pop(_controller.excluir(agendamento.id!));
               },
             ),
             TextButton(
@@ -291,7 +289,7 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
     if (result != null) {
       // Se retornou é porque ecluiu, então atualiza busca
       setState(() {
-        carregarListaEvolucao();
+        carregarListaAgendamento();
       });
     }
   }

@@ -69,7 +69,6 @@ class EvolucaoFormController {
           evolucao.orientacoesDomiciliares ?? '';
     } else {
       dataController.text = Formatos.data.format(DateTime.now());
-      alunoSelecionado.id = 1;
     }
   }
 
