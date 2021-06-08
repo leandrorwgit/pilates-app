@@ -30,14 +30,14 @@ class AgendamentoFormController {
       this.alunoSelecionado = agendamento.aluno!;
       idAgendamento = agendamento.id;
       alunoController.text = agendamento.aluno?.nome ?? '';
-      dataHoraInicioController.text = Formatos.data
+      dataHoraInicioController.text = Formatos.dataHora
           .format(agendamento.dataHoraInicio != null ? agendamento.dataHoraInicio! : DateTime.now());
       duracaoController.text = agendamento.duracao != null ? agendamento.duracao.toString() : '';
       tituloController.text = agendamento.titulo ?? '';
       descricaoController.text = agendamento.descricao ?? '';
       situacao = agendamento.situacao ?? 'CRIADO';
     } else {
-      dataHoraInicioController.text = Formatos.data.format(DateTime.now());
+      dataHoraInicioController.text = Formatos.dataHora.format(DateTime.now());
     }
   }
 
@@ -45,7 +45,7 @@ class AgendamentoFormController {
     try {
       carregando.value = true;    
       agendamento.aluno = alunoSelecionado;
-      agendamento.dataHoraInicio = Formatos.data.parse(dataHoraInicioController.text);
+      agendamento.dataHoraInicio = Formatos.dataHora.parse(dataHoraInicioController.text);
       agendamento.duracao = int.tryParse(duracaoController.text) ?? 0;
       agendamento.titulo = tituloController.text;
       agendamento.descricao = descricaoController.text;

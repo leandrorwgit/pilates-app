@@ -5,6 +5,10 @@ class Validacoes {
     return (valor == null || valor.trim().isEmpty) ? mensagem : null;
   }
 
+  static String? validarCampoDataObrigatorio(DateTime? valor, String mensagem) {
+    return (valor == null) ? mensagem : null;
+  }
+
   static String? validarData(String? valor, String mensagem) {
     if (valor!.isEmpty)
       return mensagem;

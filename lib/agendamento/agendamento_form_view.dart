@@ -1,14 +1,12 @@
-import 'package:app_pilates/models/agendamento.dart';
-import 'package:date_time_picker/date_time_picker.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
+import '../models/agendamento.dart';
 import '../models/aluno.dart';
 import '../utils/validacoes.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:rx_notifier/rx_notifier.dart';
 
 import '../utils/formatos.dart';
-import '../models/agendamento.dart';
-
 import '../utils/estilos.dart';
 
 import '../agendamento/agendamento_form_controller.dart';
@@ -83,21 +81,32 @@ class _AgendamentoFormViewState extends State<AgendamentoFormView> {
                         controller.alunoController.text = suggestion.nome!;
                       },
                     ),
-                    DateTimePicker(
-                      initialValue: DateTime.now().toString(),
-                      type: DateTimePickerType.dateTime,
-                      dateMask: 'dd/MM/yyyy HH:mm',
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
+                    DateTimeField(
+                      format: Formatos.dataHora,
+                      controller: controller.dataHoraInicioController,
                       style: TextStyle(color: AppColors.texto),
                       decoration: Estilos.getDecoration('Data/Hora início'),
-                      timeLabelText: '',
-                      validator: (String? value) {
+                      validator: (DateTime? value) {
                         return Validacoes.validarCampoObrigatorio(
-                            value, 'Data/Hora início deve ser informado!');
+                            controller.dataHoraInicioController.text, 'Data/Hora início deve ser informado!');  
+                      },                    
+                      onShowPicker: (context, currentValue) async {
+                        final date = await showDatePicker(
+                            context: context,
+                            firstDate: DateTime(1900),
+                            initialDate: currentValue ?? DateTime.now(),
+                            lastDate: DateTime(2100));
+                        if (date != null) {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.fromDateTime(
+                                currentValue ?? DateTime.now()),
+                          );
+                          return DateTimeField.combine(date, time);
+                        } else {
+                          return currentValue;
+                        }
                       },
-                      onChanged: (val) =>
-                          controller.dataHoraInicioController.text = val,
                     ),
                     TextFormField(
                       controller: controller.duracaoController,

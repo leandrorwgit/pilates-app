@@ -57,10 +57,10 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
-  date_time_picker:
+  datetime_picker_formfield:
     dependency: "direct main"
     description:
-      name: date_time_picker
+      name: datetime_picker_formfield
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"

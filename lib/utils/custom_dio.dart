@@ -7,7 +7,7 @@ class CustomDio {
   var baseOptions = BaseOptions(
     baseUrl: 'https://pilates-api.herokuapp.com/api/',
     //baseUrl: 'http://localhost:3000/api/',
-    connectTimeout: 20000,
+    connectTimeout: 25000,
     receiveTimeout: 3000,
   );
 

@@ -163,7 +163,7 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
                     title: Text(
                         Formatos.data.format(agendamento.dataHoraInicio!) +
                             ' - ' +
-                            (agendamento.aluno?.nome ?? ''),
+                            (agendamento.titulo ?? ''),
                         style: TextStyle(
                           color: AppColors.texto,
                         )),
