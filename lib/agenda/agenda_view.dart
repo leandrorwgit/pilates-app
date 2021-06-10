@@ -1,3 +1,4 @@
+import 'package:app_pilates/models/agendamento.dart';
 import 'package:app_pilates/models/aluno.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
@@ -34,7 +35,7 @@ class _AgendaViewState extends State<AgendaView> {
     _repository = AgendaRepository();
     _repositoryAluno = AlunoRepository();
     _repositoryEvolucao = EvolucaoRepository();
-    _listaAgendaFuture = _repository.buscar(DateTime.now());
+    carregarListaAgenda();
   }
 
   @override
@@ -63,6 +64,9 @@ class _AgendaViewState extends State<AgendaView> {
                     date,
                     date.add(const Duration(days: 1))
                   ],
+                  // onHoursColumnTappedDown: (HourMinute hourMinute) {
+                  //   print(hourMinute);
+                  // },
                   events: snapshot.data!.map((agendaRetorno) {
                     DateTime dataHoraIni = Formatos.dataYMDHora.parse(
                         agendaRetorno.dia! + ' ' + agendaRetorno.horaIni!);
@@ -76,7 +80,9 @@ class _AgendaViewState extends State<AgendaView> {
                     }
 
                     return FlutterWeekViewEvent(
-                      title: agendaRetorno.descricao ?? '',
+                      title:
+                          (agendaRetorno.tipo == 'AGENDAMENTO' ? 'AG: ' : '') +
+                              (agendaRetorno.descricao ?? ''),
                       description: '',
                       start: dataHoraIni,
                       end: dataHoraFim,
@@ -84,22 +90,7 @@ class _AgendaViewState extends State<AgendaView> {
                       margin: EdgeInsets.all(1),
                       padding: EdgeInsets.all(5),
                       onLongPress: () async {
-                        Aluno aluno;
-                        try {
-                          carregando.value = true;
-                          aluno = await _repositoryAluno.buscar(agendaRetorno.idAluno);
-                        } finally {
-                          carregando.value = false;
-                        }
-                        final result = await Navigator.of(context).pushNamed(
-                            Rotas.ALUNO_FORM, arguments: aluno);
-                        if (result != null) {
-                          // Se retornou é porque criou/alterou, então atualiza busca
-                          setState(() {
-                            _listaAgendaFuture =
-                                _repository.buscar(DateTime.now());
-                          });
-                        }
+                        _abrirDialogOpcoes(agendaRetorno);
                       },
                       onTap: () async {
                         Evolucao evolucao;
@@ -123,8 +114,7 @@ class _AgendaViewState extends State<AgendaView> {
                         if (result != null) {
                           // Se retornou é porque criou/alterou, então atualiza busca
                           setState(() {
-                            _listaAgendaFuture =
-                                _repository.buscar(DateTime.now());
+                            carregarListaAgenda();
                           });
                         }
                       },
@@ -189,6 +179,77 @@ class _AgendaViewState extends State<AgendaView> {
           }),
         )
       ]),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () async {
+            _abrirFormularioAgendamento(null, null);
+          }),
     );
+  }
+
+  void carregarListaAgenda() {
+    _listaAgendaFuture = _repository.buscar(DateTime.now());
+  }
+
+  Future<void> _abrirEdicaoAluno(int? idAluno) async {
+    Aluno aluno;
+    try {
+      carregando.value = true;
+      aluno = await _repositoryAluno.buscar(idAluno);
+    } finally {
+      carregando.value = false;
+    }
+    final result = await Navigator.of(context)
+        .pushNamed(Rotas.ALUNO_FORM, arguments: aluno);
+    if (result != null) {
+      // Se retornou é porque criou/alterou, então atualiza busca
+      setState(() {
+        carregarListaAgenda();
+      });
+    }
+  }
+
+  void _abrirDialogOpcoes(AgendaRetorno agendaRetorno) async {
+    final result = await showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Opções', style: TextStyle(color: AppColors.label)),
+          backgroundColor: AppColors.background,
+          actions: <Widget>[
+            TextButton(
+              child: Text('Reagendar', style: TextStyle(color: AppColors.texto)),
+              onPressed: () async {
+                _abrirFormularioAgendamento(null, agendaRetorno);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Editar aluno', style: TextStyle(color: AppColors.label)),
+              onPressed: () {
+                _abrirEdicaoAluno(agendaRetorno.idAluno);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );    
+  }
+
+  Future<void> _abrirFormularioAgendamento(Agendamento? agendamento, AgendaRetorno? agendaRetornoReagendar) async {
+    final result;
+    if (agendaRetornoReagendar != null) {
+      result = await Navigator.of(context).pushNamed(Rotas.REAGENDAMENTO_FORM, arguments: agendaRetornoReagendar);
+    } else {
+      result = await Navigator.of(context).pushNamed(Rotas.AGENDAMENTO_FORM, arguments: agendamento);
+    }
+    if (result != null) {
+      // Se retornou um registro é porque alterou, então atualiza busca
+      setState(() {
+        carregarListaAgenda();
+      });
+    }
   }
 }

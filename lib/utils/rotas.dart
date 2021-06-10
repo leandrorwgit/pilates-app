@@ -8,4 +8,6 @@ class Rotas {
   static const EVOLUCAO_FORM = '/evolucao_form';
   static const AGENDAMENTO_LISTA = '/agendamento_lista';
   static const AGENDAMENTO_FORM = '/agendamento_form';
+  static const REAGENDAMENTO_FORM = '/reagendamento_form';
+
 }

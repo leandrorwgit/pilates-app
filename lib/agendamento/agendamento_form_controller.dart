@@ -7,7 +7,6 @@ import '../utils/formatos.dart';
 
 import '../models/agendamento.dart';
 import '../agendamento/agendamento_repository.dart';
-import '../agendamento/agendamento_repository.dart';
 
 class AgendamentoFormController {
   final _repository = AgendamentoRepository();
