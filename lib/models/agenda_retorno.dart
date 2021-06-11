@@ -1,5 +1,6 @@
 class AgendaRetorno {
   String? tipo;
+  int? idAgendamento;
   String? situacao;
   int? idAluno;
   String? descricao;
@@ -8,10 +9,11 @@ class AgendaRetorno {
   String? dia;
   int? idEvolucao;
 
-  AgendaRetorno({this.tipo, this.situacao, this.idAluno, this.descricao, this.horaIni, this.horaFim, this.dia, this.idEvolucao});
+  AgendaRetorno({this.tipo, this.idAgendamento, this.situacao, this.idAluno, this.descricao, this.horaIni, this.horaFim, this.dia, this.idEvolucao});
 
   AgendaRetorno.fromJson(Map<String, dynamic> json) {
     tipo = json['tipo'];
+    idAgendamento = json['idAgendamento'];
     situacao = json['situacao'];
     idAluno = json['idAluno'];
     descricao = json['descricao'];
@@ -24,6 +26,7 @@ class AgendaRetorno {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['tipo'] = this.tipo;
+    data['idAgendamento'] = this.idAgendamento;
     data['situacao'] = this.situacao;
     data['idAluno'] = this.idAluno;
     data['descricao'] = this.descricao;

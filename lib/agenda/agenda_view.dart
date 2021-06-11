@@ -1,9 +1,10 @@
-import 'package:app_pilates/models/agendamento.dart';
-import 'package:app_pilates/models/aluno.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:rx_notifier/rx_notifier.dart';
 
+import '../agendamento/agendamento_repository.dart';
+import '../models/agendamento.dart';
+import '../models/aluno.dart';
 import '../aluno/aluno_repository.dart';
 import '../components/app_drawer.dart';
 import '../evolucao/evolucao_repository.dart';
@@ -25,6 +26,7 @@ class _AgendaViewState extends State<AgendaView> {
   late final _repository;
   late final _repositoryAluno;
   late final _repositoryEvolucao;
+  late final _repositoryAgendamento;
   final DateTime date = DateTime.now();
   late Future<List<AgendaRetorno>> _listaAgendaFuture;
   var carregando = RxNotifier<bool>(false);
@@ -35,6 +37,7 @@ class _AgendaViewState extends State<AgendaView> {
     _repository = AgendaRepository();
     _repositoryAluno = AlunoRepository();
     _repositoryEvolucao = EvolucaoRepository();
+    _repositoryAgendamento = AgendamentoRepository();
     carregarListaAgenda();
   }
 
@@ -90,7 +93,18 @@ class _AgendaViewState extends State<AgendaView> {
                       margin: EdgeInsets.all(1),
                       padding: EdgeInsets.all(5),
                       onLongPress: () async {
-                        _abrirDialogOpcoes(agendaRetorno);
+                        if (agendaRetorno.tipo == 'AGENDAMENTO') {
+                          Agendamento agendamento;
+                          try {
+                            carregando.value = true;
+                            agendamento = await _repositoryAgendamento.buscar(agendaRetorno.idAgendamento);
+                          } finally {
+                            carregando.value = false;
+                          }
+                          _abrirFormularioAgendamento(agendamento, null);                                          
+                        } else {
+                          _abrirDialogOpcoes(agendaRetorno);
+                        }
                       },
                       onTap: () async {
                         Evolucao evolucao;
@@ -221,7 +235,7 @@ class _AgendaViewState extends State<AgendaView> {
             TextButton(
               child: Text('Reagendar', style: TextStyle(color: AppColors.texto)),
               onPressed: () async {
-                _abrirFormularioAgendamento(null, agendaRetorno);
+                await _abrirFormularioAgendamento(null, agendaRetorno);
                 Navigator.of(context).pop();
               },
             ),

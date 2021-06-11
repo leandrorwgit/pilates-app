@@ -59,7 +59,8 @@ class AppPilates extends StatelessWidget {
             agendamento: ModalRoute.of(ctx)!.settings.arguments != null
                 ? ModalRoute.of(ctx)!.settings.arguments as Agendamento
                 : null),
-        Rotas.REAGENDAMENTO_FORM: (ctx) => ReAgendamentoFormView(
+        Rotas.REAGENDAMENTO_FORM: (ctx) => 
+          ReAgendamentoFormView(
             agendaRetorno: ModalRoute.of(ctx)!.settings.arguments != null
                 ? ModalRoute.of(ctx)!.settings.arguments as AgendaRetorno
                 : null),

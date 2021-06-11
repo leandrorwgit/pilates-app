@@ -27,8 +27,12 @@ class ReAgendamentoFormController {
       this.alunoSelecionado = await _repositoryAlunos.buscar(agendaRetorno.idAluno!);
       this.agendamento.aluno = alunoSelecionado;
       alunoController.text = agendamento.aluno?.nome ?? '';
-      dataHoraInicioController.text = agendaRetorno.dia! + ' ' + agendaRetorno.horaIni!;
-      tituloController.text = 'Reagendamento';
+      if (agendaRetorno.dia != null && agendaRetorno.horaIni != null) {
+        String strDataYMDHora = agendaRetorno.dia! + ' ' + agendaRetorno.horaIni!;
+        DateTime dataYMDHora = Formatos.dataYMDHora.parse(strDataYMDHora);
+        dataHoraInicioController.text = Formatos.dataHora.format(dataYMDHora);
+      }
+      tituloController.text = 'Reag. '+(alunoController.text.split(' ')[0]);
       descricaoController.text = 'Reagendamento'; 
     } finally {
       carregando.value = false;
@@ -39,6 +43,14 @@ class ReAgendamentoFormController {
     try {
       carregando.value = true;  
       // Cria agendamento para cancelar a agenda normal
+      Agendamento agendamentoCanc = Agendamento();
+      agendamentoCanc.aluno = agendamento.aluno;
+      agendamentoCanc.dataHoraInicio = Formatos.dataHora.parse(dataHoraInicioController.text);
+      agendamentoCanc.duracao = int.tryParse(duracaoController.text) ?? 0;
+      agendamentoCanc.titulo = 'Cancelamento';
+      agendamentoCanc.descricao = 'Cancelamento efetuado no dia '+Formatos.dataHora.format(DateTime.now())+'. [TituloRef: '+tituloController.text+']';
+      agendamentoCanc.situacao = 'CANCELADO';
+      await _repository.inserir(agendamentoCanc);   
 
       // Cria Agendamento novo  
       agendamento.dataHoraInicio = Formatos.dataHora.parse(dataHoraInicioController.text);

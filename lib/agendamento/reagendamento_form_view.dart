@@ -1,4 +1,4 @@
-import 'package:app_pilates/agendamento/reagendamento_form_controller.dart';
+import '../agendamento/reagendamento_form_controller.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 import '../models/agenda_retorno.dart';
