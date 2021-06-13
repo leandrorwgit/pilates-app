@@ -13,8 +13,7 @@ class AlunoRepository {
 
   Future<Aluno> atualizar(Aluno aluno) async {
     try {
-      var dio = CustomDio.comAutenticacao().instancia;
-      print(aluno.toJson());
+      var dio = CustomDio.comAutenticacao().instancia;    
       var res = await dio.put('aluno/'+aluno.id.toString(), data: aluno.toJson());
       return Aluno.fromMap(res.data);    
     } on Exception catch (e) {

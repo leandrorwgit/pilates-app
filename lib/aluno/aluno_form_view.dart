@@ -240,7 +240,7 @@ class _AlunoFormViewState extends State<AlunoFormView> {
         floatingActionButton: RxBuilder(builder: (_) {
           return FloatingActionButton(
             child: Icon(Icons.save),
-            onPressed: controller.carregando.value == 1
+            onPressed: controller.carregando.value
                 ? null
                 : () async {
                     if (_formKey.currentState!.validate()) {

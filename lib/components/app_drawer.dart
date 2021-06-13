@@ -70,6 +70,11 @@ class AppDrawer extends StatelessWidget {
             () => Navigator.of(context).pushReplacementNamed(Rotas.AGENDAMENTO_LISTA),
           ),
           _criarItem(
+            Icons.payment,
+            'Contas a Pagar',
+            () => Navigator.of(context).pushReplacementNamed(Rotas.CONTASPAGAR_LISTA),
+          ),
+          _criarItem(
             Icons.exit_to_app,
             'Sair',
             () => deslogarApp(context),

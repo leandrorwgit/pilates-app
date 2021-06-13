@@ -9,4 +9,6 @@ class Rotas {
   static const AGENDAMENTO_LISTA = '/agendamento_lista';
   static const AGENDAMENTO_FORM = '/agendamento_form';
   static const REAGENDAMENTO_FORM = '/reagendamento_form';
+  static const CONTASPAGAR_LISTA = '/contaspagar_lista';
+  static const CONTASPAGAR_FORM = '/contaspagar_form';  
 }
