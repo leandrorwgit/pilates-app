@@ -10,5 +10,7 @@ class Rotas {
   static const AGENDAMENTO_FORM = '/agendamento_form';
   static const REAGENDAMENTO_FORM = '/reagendamento_form';
   static const CONTASPAGAR_LISTA = '/contaspagar_lista';
-  static const CONTASPAGAR_FORM = '/contaspagar_form';  
+  static const CONTASPAGAR_FORM = '/contaspagar_form'; 
+  static const CONTASPAGARPAGAMENTO_LISTA = '/contaspagarpagamento_lista';
+  static const CONTASPAGARPAGAMENTO_FORM = '/contaspagarpagamento_form'; 
 }

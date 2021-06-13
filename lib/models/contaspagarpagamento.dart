@@ -21,7 +21,7 @@ class ContasPagarPagamento {
       'id': id,
       'idContasPagar': contasPagar?.id,
       'dataPagamento': dataPagamento?.toIso8601String(),
-      'valorPago': valorPago,
+      'valorPago': valorPago != null ? valorPago!.toStringAsFixed(2) : null,
       'formaPagamento': formaPagamento
     };
   }
@@ -31,7 +31,7 @@ class ContasPagarPagamento {
       id: map['id'],
       contasPagar: ContasPagar(id: map['contasPagar']?['id'], descricao: map['contasPagar']?['descricao']),
       dataPagamento: DateTime.parse(map['dataPagamento']),
-      valorPago: map['valorPago'],
+      valorPago: double.tryParse(map['valorPago']) ?? 0,
       formaPagamento: map['formaPagamento'],
     );
   }

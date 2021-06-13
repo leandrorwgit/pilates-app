@@ -6,6 +6,8 @@ class Formatos {
   static final dataYMD = DateFormat('yyyy-MM-dd');
   static final dataYMDHora = DateFormat('yyyy-MM-dd HH:mm:ss');
 
+  static final moedaReal = NumberFormat.simpleCurrency(locale: "pt_Br");
+
   static String adicionaZeroEsquerda(int number) =>
       (number < 10 ? '0' : '') + number.toString();
 }

@@ -17,7 +17,6 @@ class ContasPagarRepository {
       var res = await dio.put('contaspagar/'+contasPagar.id.toString(), data: contasPagar.toJson());
       return ContasPagar.fromMap(res.data);    
     } on Exception catch (e) {
-      print(e);
       throw e;
     }
   }  

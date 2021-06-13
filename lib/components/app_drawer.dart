@@ -5,6 +5,26 @@ import '../utils/rotas.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
+  Widget _criarGrupo({required List<Widget> children}) {
+    return ExpansionTile(
+      leading: Icon(
+        Icons.payment,
+        size: 26,
+        color: AppColors.texto,
+      ),
+      title: Text(
+        'Contas a Pagar',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: AppColors.texto,
+        ),
+      ),
+      children: children,
+      trailing: Icon(Icons.expand_more, color: AppColors.texto),
+    );
+  }
+
   Widget _criarItem(IconData icone, String descricao, Function onTap) {
     return ListTile(
       leading: Icon(
@@ -17,6 +37,24 @@ class AppDrawer extends StatelessWidget {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
+          color: AppColors.texto,
+        ),
+      ),
+      onTap: onTap as void Function()?,
+    );
+  }
+
+  Widget _criarSubItem(IconData icone, String descricao, Function onTap) {
+    return ListTile(
+      leading: Icon(
+        icone,
+        size: 20,
+        color: AppColors.texto,
+      ),
+      title: Text(
+        descricao,
+        style: TextStyle(
+          fontSize: 16,
           color: AppColors.texto,
         ),
       ),
@@ -62,18 +100,29 @@ class AppDrawer extends StatelessWidget {
           _criarItem(
             Icons.trending_up,
             'Evoluções',
-            () => Navigator.of(context).pushReplacementNamed(Rotas.EVOLUCAO_LISTA),
+            () => Navigator.of(context)
+                .pushReplacementNamed(Rotas.EVOLUCAO_LISTA),
           ),
           _criarItem(
             Icons.schedule,
             'Agendamentos',
-            () => Navigator.of(context).pushReplacementNamed(Rotas.AGENDAMENTO_LISTA),
+            () => Navigator.of(context)
+                .pushReplacementNamed(Rotas.AGENDAMENTO_LISTA),
           ),
-          _criarItem(
-            Icons.payment,
-            'Contas a Pagar',
-            () => Navigator.of(context).pushReplacementNamed(Rotas.CONTASPAGAR_LISTA),
-          ),
+          _criarGrupo(children: [
+            _criarSubItem(
+              Icons.note_add_outlined,
+              'Cadastro',
+              () => Navigator.of(context)
+                  .pushReplacementNamed(Rotas.CONTASPAGAR_LISTA),
+            ),
+            _criarSubItem(
+              Icons.notes_outlined,
+              'Pagamentos',
+              () => Navigator.of(context)
+                  .pushReplacementNamed(Rotas.CONTASPAGARPAGAMENTO_LISTA),
+            ),
+          ]),
           _criarItem(
             Icons.exit_to_app,
             'Sair',

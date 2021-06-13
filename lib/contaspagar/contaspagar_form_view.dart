@@ -35,7 +35,8 @@ class _ContasPagarFormViewState extends State<ContasPagarFormView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.contasPagar == null ? 'Nova Conta' : 'Alterar Conta'),
+          title:
+              Text(widget.contasPagar == null ? 'Nova Conta' : 'Alterar Conta'),
         ),
         body: Stack(children: [
           Form(
@@ -79,14 +80,20 @@ class _ContasPagarFormViewState extends State<ContasPagarFormView> {
                       validator: (String? value) {
                         return Validacoes.validarCampoObrigatorio(
                             value, 'Dia vencimento deve ser informado!');
-                      },                      
+                      },
                     ),
                     TextFormField(
                       controller: controller.valorController,
                       style: TextStyle(color: AppColors.texto),
                       keyboardType: TextInputType.number,
                       decoration: Estilos.getDecoration('Valor'),
-                      inputFormatters: [MaskedInputFormatter("000,00")],
+                      inputFormatters: [
+                        MoneyInputFormatter(
+                          thousandSeparator: ThousandSeparator.Period,
+                          leadingSymbol: 'R\$',
+                          useSymbolPadding: true,
+                        )
+                      ],
                       validator: (String? value) {
                         return Validacoes.validarCampoObrigatorio(
                             value, 'Valor deve ser informado!');
@@ -103,7 +110,7 @@ class _ContasPagarFormViewState extends State<ContasPagarFormView> {
                         });
                       },
                       decoration: Estilos.getDecoration('Forma Pagamento'),
-                    ),                    
+                    ),
                   ],
                 ),
               ),

@@ -17,7 +17,6 @@ class AlunoRepository {
       var res = await dio.put('aluno/'+aluno.id.toString(), data: aluno.toJson());
       return Aluno.fromMap(res.data);    
     } on Exception catch (e) {
-      print(e);
       throw e;
     }
   }  

@@ -21,7 +21,7 @@ class ContasPagar {
       'id': id,
       'descricao': descricao,
       'diaVencimento': diaVencimento,
-      'valor': valor,
+      'valor': valor != null ? valor!.toStringAsFixed(2) : null,
       'formaPagamento': formaPagamento,
       'ativo': ativo,
     };
@@ -32,7 +32,7 @@ class ContasPagar {
       id: map['id'],
       descricao: map['descricao'],
       diaVencimento: map['diaVencimento'],
-      valor: map['valor'],
+      valor: double.tryParse(map['valor']) ?? 0,
       formaPagamento: map['formaPagamento'],
       ativo: map['ativo'],
     );
