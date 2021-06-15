@@ -1,6 +1,5 @@
 import 'package:app_pilates/utils/formatos.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:rx_notifier/rx_notifier.dart';
 
 import '../models/contaspagar.dart';
