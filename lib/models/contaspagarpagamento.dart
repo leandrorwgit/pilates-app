@@ -29,7 +29,7 @@ class ContasPagarPagamento {
   factory ContasPagarPagamento.fromMap(Map<String, dynamic> map) {
     return ContasPagarPagamento(
       id: map['id'],
-      contasPagar: ContasPagar(id: map['contasPagar']?['id'], descricao: map['contasPagar']?['descricao']),
+      contasPagar: ContasPagar(id: map['contasPagar']?['id'], descricao: map['contasPagar']?['descricao'], valor: double.tryParse(map['contasPagar']?['valor']) ?? 0),
       dataPagamento: DateTime.parse(map['dataPagamento']),
       valorPago: double.tryParse(map['valorPago']) ?? 0,
       formaPagamento: map['formaPagamento'],

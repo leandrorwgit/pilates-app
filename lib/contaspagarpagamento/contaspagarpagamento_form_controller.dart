@@ -14,6 +14,7 @@ class ContasPagarPagamentoFormController {
   var contasPagarSelecionada = ContasPagar();
   int? idContasPagarPagamento;
   final contasPagarController = TextEditingController(text: '');
+  final contasPagarValorController = TextEditingController(text: '');
   final dataPagamentoController = TextEditingController(text: '');
   final valorPagoController = TextEditingController(text: '');
   final formaPagamentoItens = ['Boleto', 'Pix', 'Dinheiro', 'Depósito', 'DOC'];
@@ -25,7 +26,8 @@ class ContasPagarPagamentoFormController {
       this.contasPagarPagamento = contasPagarPagamento;
       this.contasPagarSelecionada = contasPagarPagamento.contasPagar!;
       idContasPagarPagamento = contasPagarPagamento.id;
-      contasPagarController.text = contasPagarPagamento.contasPagar?.descricao ?? '';
+      contasPagarController.text = contasPagarSelecionada.descricao!;
+      contasPagarValorController.text = (contasPagarSelecionada.valor != null ? 'Valor: '+Formatos.moedaReal.format(contasPagarSelecionada.valor) : '');
       dataPagamentoController.text = Formatos.data
           .format(contasPagarPagamento.dataPagamento != null ? contasPagarPagamento.dataPagamento! : DateTime.now());
       valorPagoController.text = contasPagarPagamento.valorPago != null ? Formatos.moedaReal.format(contasPagarPagamento.valorPago) : '';
@@ -55,16 +57,21 @@ class ContasPagarPagamentoFormController {
     }
   }
 
-  Future<List<ContasPagar>> listarContasPagar(String descricao) async {
+  Future<List<ContasPagar>> listarContasPagar(String descricao) {
     return _repositoryContasPagar.listar(descricao, true);
   }
 
-  Future<ContasPagarPagamento> buscarPorId(int idContasPagarPagamento) async {
+  Future<ContasPagar> buscarContasPagar(int idContasPagar) {
+    return _repositoryContasPagar.buscar(idContasPagar);
+  }
+
+  Future<ContasPagarPagamento> buscarPorId(int idContasPagarPagamento) {
     return _repository.buscar(idContasPagarPagamento);
   }
     
   void dispose() {
     contasPagarController.dispose();
+    contasPagarValorController.dispose();
     dataPagamentoController.dispose();
     valorPagoController.dispose();
   }

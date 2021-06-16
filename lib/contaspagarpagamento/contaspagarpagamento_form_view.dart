@@ -24,10 +24,12 @@ class ContasPagarPagamentoFormView extends StatefulWidget {
   ContasPagarPagamentoFormView({this.contasPagarPagamento});
 
   @override
-  _ContasPagarPagamentoFormViewState createState() => _ContasPagarPagamentoFormViewState();
+  _ContasPagarPagamentoFormViewState createState() =>
+      _ContasPagarPagamentoFormViewState();
 }
 
-class _ContasPagarPagamentoFormViewState extends State<ContasPagarPagamentoFormView> {
+class _ContasPagarPagamentoFormViewState
+    extends State<ContasPagarPagamentoFormView> {
   late final ContasPagarPagamentoFormController controller;
 
   @override
@@ -43,8 +45,10 @@ class _ContasPagarPagamentoFormViewState extends State<ContasPagarPagamentoFormV
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-              widget.contasPagarPagamento != null && widget.contasPagarPagamento!.id != null ? 'Alterar Pagamento' : 'Novo Pagamento'),
+          title: Text(widget.contasPagarPagamento != null &&
+                  widget.contasPagarPagamento!.id != null
+              ? 'Alterar Pagamento'
+              : 'Novo Pagamento'),
         ),
         body: Stack(children: [
           Form(
@@ -53,6 +57,7 @@ class _ContasPagarPagamentoFormViewState extends State<ContasPagarPagamentoFormV
               padding: const EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TypeAheadFormField<ContasPagar>(
                       textFieldConfiguration: TextFieldConfiguration(
@@ -61,7 +66,8 @@ class _ContasPagarPagamentoFormViewState extends State<ContasPagarPagamentoFormV
                         controller: controller.contasPagarController,
                       ),
                       suggestionsCallback: (pattern) async {
-                        return await controller.listarContasPagar(pattern + "%");
+                        return await controller
+                            .listarContasPagar(pattern + "%");
                       },
                       itemBuilder: (context, ContasPagar suggestion) {
                         return ListTile(
@@ -81,12 +87,28 @@ class _ContasPagarPagamentoFormViewState extends State<ContasPagarPagamentoFormV
                       },
                       onSuggestionSelected: (ContasPagar suggestion) {
                         controller.contasPagarSelecionada = suggestion;
-                        controller.contasPagarController.text = suggestion.descricao!;
+                        controller.contasPagarController.text =
+                            suggestion.descricao!;
+                        setState(() {
+                          controller.contasPagarValorController.text =
+                              (suggestion.valor != null
+                                  ? 'Valor: ' +
+                                      Formatos.moedaReal
+                                          .format(suggestion.valor)
+                                  : '');
+                        });
                       },
                       validator: (String? value) {
                         return Validacoes.validarCampoObrigatorio(
                             value, 'Conta deve ser informada!');
                       },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6.0),
+                      child: Text(
+                        controller.contasPagarValorController.text,
+                        style: TextStyle(color: AppColors.label),
+                      ),
                     ),
                     TextFormField(
                       readOnly: true,
@@ -98,7 +120,8 @@ class _ContasPagarPagamentoFormViewState extends State<ContasPagarPagamentoFormV
                       keyboardType: TextInputType.text,
                       decoration: Estilos.getDecoration(
                         'Data pagamento',
-                        suffixIcon: Icon(Icons.calendar_today, color: AppColors.label),
+                        suffixIcon:
+                            Icon(Icons.calendar_today, color: AppColors.label),
                       ),
                     ),
                     TextFormField(
@@ -157,7 +180,8 @@ class _ContasPagarPagamentoFormViewState extends State<ContasPagarPagamentoFormV
                 : () async {
                     if (_formKey.currentState!.validate()) {
                       try {
-                        ContasPagarPagamento contasPagarPagamento = await controller.persistir();
+                        ContasPagarPagamento contasPagarPagamento =
+                            await controller.persistir();
                         Navigator.pop(context, contasPagarPagamento);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -195,7 +219,7 @@ class _ContasPagarPagamentoFormViewState extends State<ContasPagarPagamentoFormV
     });
   }
 
-List<DropdownMenuItem<String>> getListaFormaPagamento(List formas) {
+  List<DropdownMenuItem<String>> getListaFormaPagamento(List formas) {
     List<DropdownMenuItem<String>> items = [];
     for (String forma in formas) {
       items.add(
@@ -206,7 +230,7 @@ List<DropdownMenuItem<String>> getListaFormaPagamento(List formas) {
       );
     }
     return items;
-  }  
+  }
 
   @override
   void dispose() {

@@ -24,8 +24,7 @@ class _ContasPagarPagamentoListaViewState
   late Future<List<PagamentosRetorno>> _listaPagamentosFuture;
   final filtroAnoController =
       TextEditingController(text: DateTime.now().year.toString());
-  final filtroMesController =
-      TextEditingController(text: DateTime.now().month.toString());
+  String filtroMes = Formatos.getNomeMes(DateTime.now().month.toString());
 
   @override
   void initState() {
@@ -39,7 +38,7 @@ class _ContasPagarPagamentoListaViewState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pagamentos'),
+        title: Text('Pagamentos ' + filtroMes + "/" + filtroAnoController.text),
         actions: <Widget>[
           Builder(
             builder: (context) {
@@ -74,10 +73,14 @@ class _ContasPagarPagamentoListaViewState
                     decoration: Estilos.getDecoration('Ano'),
                   ),
                   // Mes
-                  TextField(
-                    controller: filtroMesController,
-                    style: TextStyle(color: AppColors.texto),
-                    keyboardType: TextInputType.number,
+                  DropdownButtonFormField<String>(
+                    value: filtroMes,
+                    items: getListaMeses(Formatos.getMeses()),
+                    onChanged: (String? value) {
+                      setState(() {
+                        filtroMes = value!;
+                      });
+                    },
                     decoration: Estilos.getDecoration('Mês'),
                   ),
                   SizedBox(height: 20),
@@ -119,55 +122,100 @@ class _ContasPagarPagamentoListaViewState
                 child: CircularProgressIndicator(),
               );
             } else {
-              return ListView.separated(
-                padding: EdgeInsets.all(10),
-                separatorBuilder: (context, index) => Divider(
-                  color: Colors.black,
-                ),
-                itemCount: snapshot.data!.length,
-                itemBuilder: (ctx, index) {
-                  var pagamento = snapshot.data![index];
-                  return ListTile(
-                    leading: pagamento.valorPago != null
-                        ? Icon(
-                            Icons.check_box,
-                            color: AppColors.darkGreen,
-                          )
-                        : Icon(
-                            Icons.cancel_rounded,
-                            color: AppColors.darkRed,
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.all(10),
+                      separatorBuilder: (context, index) => Divider(
+                        color: Colors.black,
+                      ),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (ctx, index) {
+                        var pagamento = snapshot.data![index];
+                        return ListTile(
+                          leading: pagamento.valorPago != null
+                              ? Icon(
+                                  Icons.check_box,
+                                  color: AppColors.darkGreen,
+                                )
+                              : Icon(
+                                  Icons.cancel_rounded,
+                                  color: AppColors.darkRed,
+                                ),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(pagamento.descricao!,
+                                  style: TextStyle(
+                                    color: AppColors.texto,
+                                  )),
+                              Text(
+                                  Formatos.moedaReal.format(
+                                      pagamento.valorPago != null
+                                          ? pagamento.valorPago
+                                          : pagamento.valor),
+                                  style: TextStyle(
+                                    color: AppColors.texto,
+                                  )),
+                            ],
                           ),
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          trailing: IconButton(
+                            icon: Icon(
+                              Icons.delete,
+                              color: AppColors.delete,
+                            ),
+                            onPressed: () {
+                              _excluirContasPagarPagamento(pagamento);
+                            },
+                          ),
+                          onTap: () {
+                            _abrirFormulario(pagamento);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  Divider(
+                    thickness: 2,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4, bottom: 10),
+                    child: Column(
                       children: [
-                        Text(pagamento.descricao!,
+                        Text(
+                            'Total: ' +
+                                Formatos.moedaReal.format(snapshot.data!.fold(
+                                    0.0,
+                                    (double previousValue, element) =>
+                                        previousValue +
+                                        (element.valor != null
+                                            ? element.valor!
+                                            : 0))),
                             style: TextStyle(
                               color: AppColors.texto,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             )),
                         Text(
-                            Formatos.moedaReal.format(
-                                pagamento.valorPago != null
-                                    ? pagamento.valorPago
-                                    : pagamento.valor),
+                            'Total pago: ' +
+                                Formatos.moedaReal.format(snapshot.data!.fold(
+                                    0.0,
+                                    (double previousValue, element) =>
+                                        previousValue +
+                                        (element.valorPago != null
+                                            ? element.valorPago!
+                                            : 0))),
                             style: TextStyle(
                               color: AppColors.texto,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             )),
                       ],
                     ),
-                    trailing: IconButton(
-                      icon: Icon(
-                        Icons.delete,
-                        color: AppColors.delete,
-                      ),
-                      onPressed: () {
-                        _excluirContasPagarPagamento(pagamento);
-                      },
-                    ),
-                    onTap: () {
-                      _abrirFormulario(pagamento);
-                    },
-                  );
-                },
+                  ),
+                ],
               );
             }
           }),
@@ -180,15 +228,28 @@ class _ContasPagarPagamentoListaViewState
     );
   }
 
+  List<DropdownMenuItem<String>> getListaMeses(List meses) {
+    List<DropdownMenuItem<String>> items = [];
+    for (String mes in meses) {
+      items.add(
+        DropdownMenuItem(
+          value: mes,
+          child: Text(mes, style: TextStyle(color: AppColors.texto)),
+        ),
+      );
+    }
+    return items;
+  }
+
   void carregarListaPagamento() {
     _listaPagamentosFuture = _controller.listarPagamentos(
         int.parse(filtroAnoController.text),
-        int.parse(filtroMesController.text));
+        int.parse(Formatos.getNumeroMes(filtroMes)));
   }
 
   void _limparFiltros() {
     filtroAnoController.text = DateTime.now().year.toString();
-    filtroMesController.text = DateTime.now().month.toString();
+    filtroMes = Formatos.getNomeMes(DateTime.now().month.toString());
   }
 
   void _aplicarFiltros() {
@@ -200,11 +261,15 @@ class _ContasPagarPagamentoListaViewState
 
   Future<void> _abrirFormulario(PagamentosRetorno? pagamento) async {
     ContasPagarPagamento? contasPagarPagamento;
-    if (pagamento != null &&
-        pagamento.idPagamento != null &&
-        pagamento.idPagamento! > 0) {
-      contasPagarPagamento =
-          await _controllerForm.buscarPorId(pagamento.idPagamento!);
+    if (pagamento != null) {
+      if (pagamento.idPagamento != null && pagamento.idPagamento! > 0) {
+        contasPagarPagamento =
+            await _controllerForm.buscarPorId(pagamento.idPagamento!);
+      } else if (pagamento.idConta != null && pagamento.idConta! > 0) {
+        contasPagarPagamento = ContasPagarPagamento();
+        contasPagarPagamento.contasPagar = await _controllerForm.buscarContasPagar(pagamento.idConta!);
+        contasPagarPagamento.valorPago = pagamento.valor;
+      }
     }
     final result = await Navigator.of(context).pushNamed(
         Rotas.CONTASPAGARPAGAMENTO_FORM,
