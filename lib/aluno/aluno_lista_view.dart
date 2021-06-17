@@ -30,7 +30,7 @@ class _AlunoListaViewState extends State<AlunoListaView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Alunos'),
+        title: Text('Pacientes'),
         actions: <Widget>[
           Builder(
             builder: (context) {

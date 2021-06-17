@@ -240,7 +240,7 @@ class _AgendaViewState extends State<AgendaView> {
               },
             ),
             TextButton(
-              child: Text('Editar aluno', style: TextStyle(color: AppColors.label)),
+              child: Text('Editar paciente', style: TextStyle(color: AppColors.label)),
               onPressed: () {
                 _abrirEdicaoAluno(agendaRetorno.idAluno);
                 Navigator.of(context).pop();

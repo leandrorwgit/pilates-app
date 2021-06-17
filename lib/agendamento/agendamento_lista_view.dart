@@ -85,7 +85,7 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
                   TypeAheadField<Aluno>(
                     textFieldConfiguration: TextFieldConfiguration(
                       style: TextStyle(color: AppColors.texto),
-                      decoration: Estilos.getDecoration('Aluno'),
+                      decoration: Estilos.getDecoration('Paciente'),
                       controller: filtroAlunoController,
                     ),
                     suggestionsCallback: (pattern) async {
@@ -101,7 +101,7 @@ class _AgendamentoListaViewState extends State<AgendamentoListaView> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
-                          'Nenhum aluno encontrado!',
+                          'Nenhum paciente encontrado!',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: AppColors.label),
                         ),

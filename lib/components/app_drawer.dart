@@ -94,7 +94,7 @@ class AppDrawer extends StatelessWidget {
           ),
           _criarItem(
             Icons.person,
-            'Alunos',
+            'Pacientes',
             () => Navigator.of(context).pushReplacementNamed(Rotas.ALUNO_LISTA),
           ),
           _criarItem(

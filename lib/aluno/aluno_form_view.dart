@@ -35,7 +35,7 @@ class _AlunoFormViewState extends State<AlunoFormView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.aluno == null ? 'Novo Aluno' : 'Alterar Aluno'),
+          title: Text(widget.aluno == null ? 'Novo Paciente' : 'Alterar Paciente'),
         ),
         body: Stack(children: [
           Form(
@@ -145,18 +145,24 @@ class _AlunoFormViewState extends State<AlunoFormView> {
                               fit: BoxFit.scaleDown,
                               child: ToggleButtons(
                                 children: [
-                                  Text('SEG',
-                                      style: TextStyle(color: AppColors.texto)),
-                                  Text('TER',
-                                      style: TextStyle(color: AppColors.texto)),
-                                  Text('QUA',
-                                      style: TextStyle(color: AppColors.texto)),
-                                  Text('QUI',
-                                      style: TextStyle(color: AppColors.texto)),
-                                  Text('SEX',
-                                      style: TextStyle(color: AppColors.texto)),
-                                  Text('SAB',
-                                      style: TextStyle(color: AppColors.texto)),
+                                  Text('SEG'+(controller.aulaHorarioInicioDiaSelecionado[0] != null ? '\n'+controller.aulaHorarioInicioDiaSelecionado[0]! : ''),
+                                      style: TextStyle(color: AppColors.texto),
+                                      textAlign: TextAlign.center),
+                                  Text('TER'+(controller.aulaHorarioInicioDiaSelecionado[1] != null ? '\n'+controller.aulaHorarioInicioDiaSelecionado[1]! : ''),
+                                      style: TextStyle(color: AppColors.texto),
+                                      textAlign: TextAlign.center),
+                                  Text('QUA'+(controller.aulaHorarioInicioDiaSelecionado[2] != null ? '\n'+controller.aulaHorarioInicioDiaSelecionado[2]! : ''),
+                                      style: TextStyle(color: AppColors.texto),
+                                      textAlign: TextAlign.center),
+                                  Text('QUI'+(controller.aulaHorarioInicioDiaSelecionado[3] != null ? '\n'+controller.aulaHorarioInicioDiaSelecionado[3]! : ''),
+                                      style: TextStyle(color: AppColors.texto),
+                                      textAlign: TextAlign.center),
+                                  Text('SEX'+(controller.aulaHorarioInicioDiaSelecionado[4] != null ? '\n'+controller.aulaHorarioInicioDiaSelecionado[4]! : ''),
+                                      style: TextStyle(color: AppColors.texto),
+                                      textAlign: TextAlign.center),
+                                  Text('SAB'+(controller.aulaHorarioInicioDiaSelecionado[5] != null ? '\n'+controller.aulaHorarioInicioDiaSelecionado[5]! : ''),
+                                      style: TextStyle(color: AppColors.texto),
+                                      textAlign: TextAlign.center),
                                 ],
                                 fillColor: Theme.of(context).accentColor,
                                 isSelected: controller.aulaDiaSelecionado,
@@ -164,6 +170,10 @@ class _AlunoFormViewState extends State<AlunoFormView> {
                                   setState(() {
                                     controller.aulaDiaSelecionado[index] =
                                         !controller.aulaDiaSelecionado[index];
+                                    if (controller.aulaDiaSelecionado[index])
+                                      _selecionarHora(context, index);
+                                    else
+                                      controller.aulaHorarioInicioDiaSelecionado[index] = null;
                                   });
                                 },
                               ),
@@ -171,22 +181,6 @@ class _AlunoFormViewState extends State<AlunoFormView> {
                           ),
                         ],
                       ),
-                    ),
-                    TextFormField(
-                      controller: controller.aulaHorarioInicioController,
-                      readOnly: true,
-                      onTap: () {
-                        _selecionarHora(context);
-                      },
-                      autovalidateMode: AutovalidateMode.always,
-                      style: TextStyle(color: AppColors.texto),
-                      keyboardType: TextInputType.text,
-                      decoration:
-                          Estilos.getDecoration('Horário de início [Ex: 7:00]'),
-                      validator: (String? value) {
-                        return Validacoes.validarCampoObrigatorio(
-                            value, 'Horário de início deve ser informado!');
-                      },
                     ),
                     TextFormField(
                       controller: controller.aulaDuracaoController,
@@ -270,7 +264,7 @@ class _AlunoFormViewState extends State<AlunoFormView> {
     return items;
   }
 
-  Future<void> _selecionarHora(BuildContext context) async {
+  Future<void> _selecionarHora(BuildContext context, int index) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: horaSelecionada,
@@ -289,7 +283,7 @@ class _AlunoFormViewState extends State<AlunoFormView> {
     if (picked != null) {
       setState(() {
         horaSelecionada = picked;
-        controller.aulaHorarioInicioController.text =
+        controller.aulaHorarioInicioDiaSelecionado[index] =
             horaSelecionada.format(context).split(" ")[0];
       });
     }

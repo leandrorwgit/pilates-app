@@ -79,7 +79,7 @@ class _ContasPagarPagamentoFormViewState
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(
-                            'Nenhum aluno encontrado!',
+                            'Nenhuma conta encontrada!',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: AppColors.label),
                           ),

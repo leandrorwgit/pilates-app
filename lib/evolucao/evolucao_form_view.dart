@@ -51,7 +51,7 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
                     TypeAheadFormField<Aluno>(
                       textFieldConfiguration: TextFieldConfiguration(
                         style: TextStyle(color: AppColors.texto),
-                        decoration: Estilos.getDecoration('Aluno'),
+                        decoration: Estilos.getDecoration('Paciente'),
                         controller: controller.alunoController,
                       ),
                       suggestionsCallback: (pattern) async {
@@ -67,7 +67,7 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(
-                            'Nenhum aluno encontrado!',
+                            'Nenhum paciente encontrado!',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: AppColors.label),
                           ),
@@ -79,7 +79,7 @@ class _EvolucaoFormViewState extends State<EvolucaoFormView> {
                       },
                       validator: (String? value) {
                         return Validacoes.validarCampoObrigatorio(
-                            value, 'Aluno deve ser informado!');
+                            value, 'Paciente deve ser informado!');
                       },
                     ),
                     TextFormField(

@@ -52,7 +52,7 @@ class _ReAgendamentoFormViewState extends State<ReAgendamentoFormView> {
                       controller: controller.alunoController,
                       style: TextStyle(color: AppColors.texto),
                       keyboardType: TextInputType.number,
-                      decoration: Estilos.getDecoration('Aluno'),
+                      decoration: Estilos.getDecoration('Paciente'),
                     ),                    
                     DateTimeField(
                       format: Formatos.dataHora,

@@ -18,7 +18,7 @@ class AlunoFormController {
   final queixasController = TextEditingController(text: '');
   final diaPagamentoController = TextEditingController(text: '');
   List<bool> aulaDiaSelecionado = [false, false, false, false, false, false];
-  final aulaHorarioInicioController = TextEditingController(text: '');
+  List<String?> aulaHorarioInicioDiaSelecionado = [null, null, null, null, null, null];
   final aulaDuracaoController = TextEditingController(text: '');
   bool ativo = true;
   final formaPagamentoItens = ['Pix', 'Dinheiro', 'Depósito', 'DOC'];
@@ -44,7 +44,12 @@ class AlunoFormController {
       aulaDiaSelecionado[3] = aluno.aulaQui ?? false;
       aulaDiaSelecionado[4] = aluno.aulaSex ?? false;
       aulaDiaSelecionado[5] = aluno.aulaSab ?? false;
-      aulaHorarioInicioController.text = aluno.aulaHorarioInicio ?? '';
+      aulaHorarioInicioDiaSelecionado[0] = aluno.aulaHorarioInicioSeg;
+      aulaHorarioInicioDiaSelecionado[1] = aluno.aulaHorarioInicioTer;
+      aulaHorarioInicioDiaSelecionado[2] = aluno.aulaHorarioInicioQua;
+      aulaHorarioInicioDiaSelecionado[3] = aluno.aulaHorarioInicioQui;
+      aulaHorarioInicioDiaSelecionado[4] = aluno.aulaHorarioInicioSex;
+      aulaHorarioInicioDiaSelecionado[5] = aluno.aulaHorarioInicioSab;      
       aulaDuracaoController.text = aluno.aulaDuracao != null ? aluno.aulaDuracao.toString() : '';
       ativo = aluno.ativo ?? false;       
     }
@@ -70,7 +75,12 @@ class AlunoFormController {
       aluno.aulaQui = aulaDiaSelecionado[3];
       aluno.aulaSex = aulaDiaSelecionado[4];
       aluno.aulaSab = aulaDiaSelecionado[5];
-      aluno.aulaHorarioInicio = aulaHorarioInicioController.text;
+      aluno.aulaHorarioInicioSeg = aulaHorarioInicioDiaSelecionado[0];
+      aluno.aulaHorarioInicioTer = aulaHorarioInicioDiaSelecionado[1];
+      aluno.aulaHorarioInicioQua = aulaHorarioInicioDiaSelecionado[2];
+      aluno.aulaHorarioInicioQui = aulaHorarioInicioDiaSelecionado[3];
+      aluno.aulaHorarioInicioSex = aulaHorarioInicioDiaSelecionado[4];
+      aluno.aulaHorarioInicioSab = aulaHorarioInicioDiaSelecionado[5];      
       aluno.aulaDuracao = int.tryParse(aulaDuracaoController.text) ?? 0;
       aluno.ativo = ativo;
       Aluno alunoRetorno;  
@@ -96,7 +106,6 @@ class AlunoFormController {
     objetivosPilatesController.dispose();
     queixasController.dispose();
     diaPagamentoController.dispose();
-    aulaHorarioInicioController.dispose();
     aulaDuracaoController.dispose();
   }
 }
