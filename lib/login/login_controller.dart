@@ -1,3 +1,4 @@
+import 'package:app_pilates/utils/sessao.dart';
 import 'package:rx_notifier/rx_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -20,13 +21,15 @@ class LoginController {
   Future<void> login(BuildContext context) async {
     try {
       carregando.value = 1;
-      bool loginOk =
-          await _repository.login(emailController.text, senhaController.text);
-      if (loginOk)
+      bool loginOk = await _repository.login(emailController.text, senhaController.text);
+      if (loginOk) {
         Navigator.of(context).pushReplacementNamed(Rotas.PRINCIPAL);
-      else
+        Sessao.getConfiguracaoAsync();
+        Sessao.getUsuarioAsync(emailController.text);
+      } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Email/Senha incorretos.')));
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))));

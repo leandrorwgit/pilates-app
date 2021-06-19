@@ -124,6 +124,12 @@ class AppDrawer extends StatelessWidget {
             ),
           ]),
           _criarItem(
+            Icons.settings,
+            'Configurações',
+            () => Navigator.of(context)
+                .pushReplacementNamed(Rotas.CONFIGURACAO_FORM),
+          ),          
+          _criarItem(
             Icons.exit_to_app,
             'Sair',
             () => deslogarApp(context),

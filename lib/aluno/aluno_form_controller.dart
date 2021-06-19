@@ -1,3 +1,4 @@
+import 'package:app_pilates/utils/sessao.dart';
 import 'package:flutter/material.dart';
 import 'package:rx_notifier/rx_notifier.dart';
 
@@ -52,6 +53,8 @@ class AlunoFormController {
       aulaHorarioInicioDiaSelecionado[5] = aluno.aulaHorarioInicioSab;      
       aulaDuracaoController.text = aluno.aulaDuracao != null ? aluno.aulaDuracao.toString() : '';
       ativo = aluno.ativo ?? false;       
+    } else {
+      aulaDuracaoController.text = Sessao.getConfiguracaoSync().duracaoPadraoAula.toString();
     }
   }
 
