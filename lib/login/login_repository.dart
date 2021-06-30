@@ -1,3 +1,4 @@
+import 'package:app_pilates/models/usuario.dart';
 import 'package:dio/dio.dart';
 
 import '../utils/custom_dio.dart';
@@ -46,5 +47,15 @@ class LoginRepository {
       else
         throw Exception('Erro: '+e.message);
     }    
-  }  
+  } 
+
+  Future<Usuario> buscarUsuario() async {
+    var dio = CustomDio.comAutenticacao().instancia;
+    var res = await dio.get('usuario/buscar');
+    if (res.data != null) {
+      return Usuario.fromMap(res.data);
+    } else {
+      return Usuario();
+    }
+  }    
 }

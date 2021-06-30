@@ -42,7 +42,6 @@ class _ConfiguracaoFormViewState extends State<ConfiguracaoFormView> {
             future: this._configuracaoFuture,
             builder:
                 (BuildContext context, AsyncSnapshot<Configuracao?> snapshot) {
-                  print(snapshot);
               if (snapshot.hasError) {
                 return Componentes.erroRest(snapshot);
               } else if (snapshot.connectionState == ConnectionState.waiting) {

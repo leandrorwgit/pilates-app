@@ -23,9 +23,9 @@ class LoginController {
       carregando.value = 1;
       bool loginOk = await _repository.login(emailController.text, senhaController.text);
       if (loginOk) {
+        await Sessao.getConfiguracaoAsync();
+        await Sessao.getUsuarioAsync();
         Navigator.of(context).pushReplacementNamed(Rotas.PRINCIPAL);
-        Sessao.getConfiguracaoAsync();
-        Sessao.getUsuarioAsync(emailController.text);
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Email/Senha incorretos.')));

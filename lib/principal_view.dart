@@ -1,6 +1,9 @@
 import 'package:app_pilates/components/app_drawer.dart';
 import 'package:flutter/material.dart';
 
+import 'components/grafico_aula_semana.dart';
+import 'utils/sessao.dart';
+
 class PrincipalView extends StatefulWidget {
   @override
   _PrincipalView createState() => _PrincipalView();
@@ -11,10 +14,17 @@ class _PrincipalView extends State<PrincipalView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BALANCE Pilates'),
+        title: Text((Sessao.getUsuarioSync().empresa != null
+            ? Sessao.getUsuarioSync().empresa!
+            : '')),
       ),
       drawer: AppDrawer(),
-      body: Center(child: Image.asset('assets/images/logo-balance.png')),
+      body: Column(
+        children: [
+          // Grafico aulas por dia da semana
+          GraficoAulaSemana(),
+        ],
+      ),
     );
   }
 }

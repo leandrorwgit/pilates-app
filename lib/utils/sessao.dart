@@ -1,3 +1,5 @@
+import '../login/login_repository.dart';
+
 import '../configuracao/configuracao_repository.dart';
 import '../models/usuario.dart';
 
@@ -6,6 +8,7 @@ import '../models/configuracao.dart';
 class Sessao {
   static Configuracao? _configuracao;
   static Usuario? _usuario;
+  static LoginRepository? _loginRepository;
 
   static Future<Configuracao?> getConfiguracaoAsync() async {
     if (_configuracao == null) {
@@ -21,10 +24,12 @@ class Sessao {
   static Configuracao getConfiguracaoSync() {
     return _configuracao ?? Configuracao();
   }
-
-  // TODO: Fazer repository do usuario (FAZER BUSCA POR EMAIL)
-  //   
-  static Future<Usuario?> getUsuarioAsync(String email) async {
+   
+  static Future<Usuario?> getUsuarioAsync() async {
+    if (_loginRepository == null)
+      _loginRepository = LoginRepository();
+    _usuario = await _loginRepository?.buscarUsuario();
+    return _usuario;
   }
 
   static Usuario getUsuarioSync() {

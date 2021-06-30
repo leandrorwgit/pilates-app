@@ -1,3 +1,4 @@
+import 'package:app_pilates/models/diasemana_retorno.dart';
 import 'package:app_pilates/utils/custom_dio.dart';
 
 import '../models/aluno.dart';
@@ -52,4 +53,14 @@ class AlunoRepository {
       return [];
     }
   }
+
+  Future<DiaSemanaRetorno> listarPorDiaSemana() async {
+    var dio = CustomDio.comAutenticacao().instancia;
+    var res = await dio.get('aluno/diasemana');
+    if (res.data != null) {
+      return (res.data.map<DiaSemanaRetorno>((c) => DiaSemanaRetorno.fromJson(c)).toList() as List<DiaSemanaRetorno>).first;
+    } else {
+      return DiaSemanaRetorno();
+    }
+  }   
 }
