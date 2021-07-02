@@ -24,6 +24,7 @@ class AlunoFormController {
   bool ativo = true;
   final formaPagamentoItens = ['Pix', 'Dinheiro', 'Depósito', 'DOC'];
   String formaPagamento = 'Pix';
+  final valorPagamentoController = TextEditingController(text: '');
   var carregando = RxNotifier<bool>(false);
 
   void carregar(Aluno? aluno) {
@@ -39,6 +40,7 @@ class AlunoFormController {
       queixasController.text = aluno.queixas ?? '';
       formaPagamento = aluno.formaPagamento ?? 'Pix';
       diaPagamentoController.text = aluno.diaPagamento != null ? aluno.diaPagamento.toString() : '';
+      valorPagamentoController.text = aluno.valorPagamento != null ? Formatos.moedaReal.format(aluno.valorPagamento) : '';
       aulaDiaSelecionado[0] = aluno.aulaSeg ?? false;
       aulaDiaSelecionado[1] = aluno.aulaTer ?? false;
       aulaDiaSelecionado[2] = aluno.aulaQua ?? false;
@@ -72,6 +74,7 @@ class AlunoFormController {
       aluno.queixas = queixasController.text;
       aluno.formaPagamento = formaPagamento;
       aluno.diaPagamento = int.tryParse(diaPagamentoController.text) ?? 0;
+      aluno.valorPagamento = double.tryParse(valorPagamentoController.text.replaceAll('R\$', '').replaceAll('.', '').replaceAll(',', '.')) ?? 0;
       aluno.aulaSeg = aulaDiaSelecionado[0];
       aluno.aulaTer = aulaDiaSelecionado[1];
       aluno.aulaQua = aulaDiaSelecionado[2];
@@ -110,5 +113,6 @@ class AlunoFormController {
     queixasController.dispose();
     diaPagamentoController.dispose();
     aulaDuracaoController.dispose();
+    valorPagamentoController.dispose();
   }
 }

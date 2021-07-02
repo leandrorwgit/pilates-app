@@ -27,6 +27,7 @@ class Aluno {
   String? aulaHorarioInicioQui;
   String? aulaHorarioInicioSex;
   String? aulaHorarioInicioSab;
+  double? valorPagamento;
 
   Aluno({
       this.id,
@@ -54,7 +55,8 @@ class Aluno {
       this.aulaHorarioInicioQua,
       this.aulaHorarioInicioQui,
       this.aulaHorarioInicioSex,
-      this.aulaHorarioInicioSab});
+      this.aulaHorarioInicioSab,
+      this.valorPagamento});
 
   Map<String, dynamic> toMap() {
     return {
@@ -84,6 +86,7 @@ class Aluno {
       'aulaHorarioInicioQui': aulaHorarioInicioQui,
       'aulaHorarioInicioSex': aulaHorarioInicioSex,
       'aulaHorarioInicioSab': aulaHorarioInicioSab,
+      'valorPagamento': valorPagamento != null ? valorPagamento!.toStringAsFixed(2) : null,
     };
   }
 
@@ -115,6 +118,7 @@ class Aluno {
       aulaHorarioInicioQui: map['aulaHorarioInicioQui'],
       aulaHorarioInicioSex: map['aulaHorarioInicioSex'],
       aulaHorarioInicioSab: map['aulaHorarioInicioSab'],
+      valorPagamento: map['valorPagamento'] != null ? double.tryParse(map['valorPagamento']) ?? 0 : null,
     );
   }
 

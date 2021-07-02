@@ -212,6 +212,23 @@ class _AlunoFormViewState extends State<AlunoFormView> {
                       keyboardType: TextInputType.number,
                       decoration: Estilos.getDecoration('Dia Pagamento'),
                     ),
+                    TextFormField(
+                      controller: controller.valorPagamentoController,
+                      style: TextStyle(color: AppColors.texto),
+                      keyboardType: TextInputType.number,
+                      decoration: Estilos.getDecoration('Valor Pagamento'),
+                      inputFormatters: [
+                        MoneyInputFormatter(
+                          thousandSeparator: ThousandSeparator.Period,
+                          leadingSymbol: 'R\$',
+                          useSymbolPadding: true,
+                        )
+                      ],
+                      validator: (String? value) {
+                        return Validacoes.validarCampoObrigatorio(
+                            value, 'Valor do pagamento deve ser informado!');
+                      },
+                    ),                    
                   ],
                 ),
               ),

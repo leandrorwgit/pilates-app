@@ -7,6 +7,8 @@ import 'contaspagar/contaspagar_form_view.dart';
 import 'contaspagar/contaspagar_lista_view.dart';
 import 'contaspagarpagamento/contaspagarpagamento_form_view.dart';
 import 'contaspagarpagamento/contaspagarpagamento_lista_view.dart';
+import 'contasreceberpagamento/contasreceberpagamento_form_view.dart';
+import 'contasreceberpagamento/contasreceberpagamento_lista_view.dart';
 import 'evolucao/evolucao_form_view.dart';
 import 'evolucao/evolucao_lista_view.dart';
 import 'models/agenda_retorno.dart';
@@ -18,6 +20,7 @@ import 'aluno/aluno_lista_view.dart';
 
 import 'models/contaspagar.dart';
 import 'models/contaspagarpagamento.dart';
+import 'models/contasreceberpagamento.dart';
 import 'models/evolucao.dart';
 import 'utils/app_colors.dart';
 
@@ -80,6 +83,11 @@ class AppPilates extends StatelessWidget {
         Rotas.CONTASPAGARPAGAMENTO_FORM: (ctx) => ContasPagarPagamentoFormView(
             contasPagarPagamento: ModalRoute.of(ctx)!.settings.arguments != null
                 ? ModalRoute.of(ctx)!.settings.arguments as ContasPagarPagamento
+                : null),   
+        Rotas.CONTASRECEBERPAGAMENTO_LISTA: (ctx) => ContasReceberPagamentoListaView(),
+        Rotas.CONTASRECEBERPAGAMENTO_FORM: (ctx) => ContasReceberPagamentoFormView(
+            contasReceberPagamento: ModalRoute.of(ctx)!.settings.arguments != null
+                ? ModalRoute.of(ctx)!.settings.arguments as ContasReceberPagamento
                 : null),   
         Rotas.CONFIGURACAO_FORM: (ctx) => ConfiguracaoFormView(),                             
       },

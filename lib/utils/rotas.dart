@@ -13,5 +13,7 @@ class Rotas {
   static const CONTASPAGAR_FORM = '/contaspagar_form'; 
   static const CONTASPAGARPAGAMENTO_LISTA = '/contaspagarpagamento_lista';
   static const CONTASPAGARPAGAMENTO_FORM = '/contaspagarpagamento_form';
+  static const CONTASRECEBERPAGAMENTO_LISTA = '/contasreceberpagamento_lista';
+  static const CONTASRECEBERPAGAMENTO_FORM = '/contasreceberpagamento_form';
   static const CONFIGURACAO_FORM = '/configuracao_form';  
 }

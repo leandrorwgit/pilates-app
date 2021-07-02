@@ -5,15 +5,15 @@ import '../utils/rotas.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
-  Widget _criarGrupo({required List<Widget> children}) {
+  Widget _criarGrupo({required IconData icone, required String descricao, required List<Widget> children}) {
     return ExpansionTile(
       leading: Icon(
-        Icons.payment,
+        icone,
         size: 26,
         color: AppColors.texto,
       ),
       title: Text(
-        'Contas a Pagar',
+        descricao,
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
@@ -65,76 +65,92 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 150,
-            width: double.infinity,
-            padding: EdgeInsets.only(top: 30),
-            color: AppColors.background,
-            child: Column(
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 150,
+              width: double.infinity,
+              padding: EdgeInsets.only(top: 30),
+              color: AppColors.background,
+              child: Column(
+                children: [
+                  Container(
+                    height: 120,
+                    child: Image.asset('assets/images/logo-pilates.png'),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            _criarItem(
+              Icons.home,
+              'Principal',
+              () => Navigator.of(context).pushReplacementNamed(Rotas.PRINCIPAL),
+            ),
+            _criarItem(
+              Icons.calendar_today,
+              'Agenda',
+              () => Navigator.of(context).pushReplacementNamed(Rotas.AGENDA),
+            ),
+            _criarItem(
+              Icons.person,
+              'Pacientes',
+              () => Navigator.of(context).pushReplacementNamed(Rotas.ALUNO_LISTA),
+            ),
+            _criarItem(
+              Icons.trending_up,
+              'Evoluções',
+              () => Navigator.of(context)
+                  .pushReplacementNamed(Rotas.EVOLUCAO_LISTA),
+            ),
+            _criarItem(
+              Icons.schedule,
+              'Agendamentos',
+              () => Navigator.of(context)
+                  .pushReplacementNamed(Rotas.AGENDAMENTO_LISTA),
+            ),
+            _criarGrupo(
+              icone: Icons.payment,
+              descricao: 'Contas a Pagar',
               children: [
-                Container(
-                  height: 120,
-                  child: Image.asset('assets/images/logo-pilates.png'),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 20),
-          _criarItem(
-            Icons.home,
-            'Principal',
-            () => Navigator.of(context).pushReplacementNamed(Rotas.PRINCIPAL),
-          ),
-          _criarItem(
-            Icons.calendar_today,
-            'Agenda',
-            () => Navigator.of(context).pushReplacementNamed(Rotas.AGENDA),
-          ),
-          _criarItem(
-            Icons.person,
-            'Pacientes',
-            () => Navigator.of(context).pushReplacementNamed(Rotas.ALUNO_LISTA),
-          ),
-          _criarItem(
-            Icons.trending_up,
-            'Evoluções',
-            () => Navigator.of(context)
-                .pushReplacementNamed(Rotas.EVOLUCAO_LISTA),
-          ),
-          _criarItem(
-            Icons.schedule,
-            'Agendamentos',
-            () => Navigator.of(context)
-                .pushReplacementNamed(Rotas.AGENDAMENTO_LISTA),
-          ),
-          _criarGrupo(children: [
-            _criarSubItem(
-              Icons.note_add_outlined,
-              'Cadastro',
+              _criarSubItem(
+                Icons.note_add_outlined,
+                'Cadastro',
+                () => Navigator.of(context)
+                    .pushReplacementNamed(Rotas.CONTASPAGAR_LISTA),
+              ),
+              _criarSubItem(
+                Icons.notes_outlined,
+                'Pagamentos',
+                () => Navigator.of(context)
+                    .pushReplacementNamed(Rotas.CONTASPAGARPAGAMENTO_LISTA),
+              ),
+            ]),
+            _criarGrupo(
+              icone: Icons.attach_money,
+              descricao: 'Contas a Receber',
+              children: [
+              _criarSubItem(
+                Icons.notes_outlined,
+                'Recebimentos',
+                () => Navigator.of(context)
+                    .pushReplacementNamed(Rotas.CONTASRECEBERPAGAMENTO_LISTA),
+              ),
+            ]),
+            _criarItem(
+              Icons.settings,
+              'Configurações',
               () => Navigator.of(context)
-                  .pushReplacementNamed(Rotas.CONTASPAGAR_LISTA),
+                  .pushReplacementNamed(Rotas.CONFIGURACAO_FORM),
+            ),          
+            _criarItem(
+              Icons.exit_to_app,
+              'Sair',
+              () => deslogarApp(context),
             ),
-            _criarSubItem(
-              Icons.notes_outlined,
-              'Pagamentos',
-              () => Navigator.of(context)
-                  .pushReplacementNamed(Rotas.CONTASPAGARPAGAMENTO_LISTA),
-            ),
-          ]),
-          _criarItem(
-            Icons.settings,
-            'Configurações',
-            () => Navigator.of(context)
-                .pushReplacementNamed(Rotas.CONFIGURACAO_FORM),
-          ),          
-          _criarItem(
-            Icons.exit_to_app,
-            'Sair',
-            () => deslogarApp(context),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
