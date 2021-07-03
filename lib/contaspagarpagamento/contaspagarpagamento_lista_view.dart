@@ -135,6 +135,7 @@ class _ContasPagarPagamentoListaViewState
                       itemBuilder: (ctx, index) {
                         var pagamento = snapshot.data![index];
                         return ListTile(
+                          horizontalTitleGap: 10,
                           leading: pagamento.valorPago != null
                               ? Icon(
                                   Icons.check_box,
@@ -147,10 +148,13 @@ class _ContasPagarPagamentoListaViewState
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(pagamento.descricao!,
-                                  style: TextStyle(
-                                    color: AppColors.texto,
-                                  )),
+                              Expanded(
+                                child: Text(pagamento.descricao!,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: AppColors.texto,
+                                    )),
+                              ),
                               Text(
                                   Formatos.moedaReal.format(
                                       pagamento.valorPago != null
@@ -267,7 +271,8 @@ class _ContasPagarPagamentoListaViewState
             await _controllerForm.buscarPorId(pagamento.idPagamento!);
       } else if (pagamento.idConta != null && pagamento.idConta! > 0) {
         contasPagarPagamento = ContasPagarPagamento();
-        contasPagarPagamento.contasPagar = await _controllerForm.buscarContasPagar(pagamento.idConta!);
+        contasPagarPagamento.contasPagar =
+            await _controllerForm.buscarContasPagar(pagamento.idConta!);
         contasPagarPagamento.valorPago = pagamento.valor;
       }
     }

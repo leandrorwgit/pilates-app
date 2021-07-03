@@ -38,7 +38,8 @@ class _ContasReceberPagamentoListaViewState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recebimentos ' + filtroMes + "/" + filtroAnoController.text),
+        title:
+            Text('Receb. ' + filtroMes + "/" + filtroAnoController.text),
         actions: <Widget>[
           Builder(
             builder: (context) {
@@ -135,6 +136,7 @@ class _ContasReceberPagamentoListaViewState
                       itemBuilder: (ctx, index) {
                         var pagamento = snapshot.data![index];
                         return ListTile(
+                          horizontalTitleGap: 10,
                           leading: pagamento.valorPago != null
                               ? Icon(
                                   Icons.check_box,
@@ -147,10 +149,13 @@ class _ContasReceberPagamentoListaViewState
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(pagamento.nome!,
-                                  style: TextStyle(
-                                    color: AppColors.texto,
-                                  )),
+                              Expanded(
+                                child: Text(pagamento.nome!,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: AppColors.texto,
+                                    )),
+                              ),
                               Text(
                                   Formatos.moedaReal.format(
                                       pagamento.valorPago != null
@@ -267,7 +272,8 @@ class _ContasReceberPagamentoListaViewState
             await _controllerForm.buscarPorId(pagamento.idPagamento!);
       } else if (pagamento.idAluno != null && pagamento.idAluno! > 0) {
         contasReceberPagamento = ContasReceberPagamento();
-        contasReceberPagamento.aluno = await _controllerForm.buscarAluno(pagamento.idAluno!);
+        contasReceberPagamento.aluno =
+            await _controllerForm.buscarAluno(pagamento.idAluno!);
         contasReceberPagamento.valorPago = pagamento.valorPagamento;
       }
     }

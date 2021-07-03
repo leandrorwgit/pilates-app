@@ -53,7 +53,6 @@ class ContasReceberPagamentoRepository {
   Future<List<PagamentosCrRetorno>> listarPagamentos(int ano, int mes) async {
     var dio = CustomDio.comAutenticacao().instancia;
     var res = await dio.get('contasreceberpagamento/pagamentos', queryParameters: {'ano': ano, 'mes': (mes)});
-    print(res.data);
     if (res.data != null) {
       return res.data.map<PagamentosCrRetorno>((c) => PagamentosCrRetorno.fromJson(c)).toList() as List<PagamentosCrRetorno>;
     } else {
