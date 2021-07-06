@@ -76,7 +76,7 @@ class _ContasPagarFormViewState extends State<ContasPagarFormView> {
                       controller: controller.diaVencimentoController,
                       style: TextStyle(color: AppColors.texto),
                       keyboardType: TextInputType.number,
-                      decoration: Estilos.getDecoration('Dia venvimento'),
+                      decoration: Estilos.getDecoration('Dia vencimento'),
                       validator: (String? value) {
                         return Validacoes.validarCampoObrigatorio(
                             value, 'Dia vencimento deve ser informado!');
